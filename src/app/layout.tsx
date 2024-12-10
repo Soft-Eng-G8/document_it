@@ -1,9 +1,11 @@
 import React from "react"
+import Navbar from "@/components/organisms/navbar"
+import './globals.css'
 
 export default ({children}: {children: React.ReactNode}) => (
   <html>
     <body>
-      {/* Nav Components, etc */}
+      <Navbar></Navbar>
       {children}
     </body>
   </html>
