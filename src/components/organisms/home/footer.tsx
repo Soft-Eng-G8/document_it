@@ -14,7 +14,11 @@ const HomeFooter = () => (
     <FooterLink href="/bomba" text="bazingn"/>
   </div>
   <div className="bg-[#111] h-20 flex items-center justify-center">
-    <h4 className="text-xl">Design by <span className="text-blue-600">Lazib Redhouane and Arabat Abd-Elhakim</span></h4>
+    <h4 className="text-xl">Design by&nbsp;
+      <span className="text-blue-400">Lazib Redhouane</span>
+       &nbsp;and&nbsp;
+       <span className="text-blue-400">Arabat Abd-Elhakim</span>
+       </h4>
   </div>
   </footer>
 )
