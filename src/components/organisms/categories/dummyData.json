@@ -78,22 +78,6 @@
             "Categories": []
           }
         ]
-      },
-      {
-        "Id": 22,
-        "Title": "Legal Agreements",
-        "Icon": "legal_icon.png",
-        "Description": "Business-related legal agreements.",
-        "Documents": [
-          {
-            "Id": 105,
-            "Title": "Lease Agreement",
-            "Description": "Rental lease for office space.",
-            "FileType": "PDF",
-            "FileSize": "3MB"
-          }
-        ],
-        "Categories": []
       }
     ]
   }
