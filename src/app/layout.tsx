@@ -1,10 +1,11 @@
-import React from "react"
+import "./globals.css";
 
-export default ({children}: {children: React.ReactNode}) => (
-  <html>
-    <body>
-      {/* Nav Components, etc */}
-      {children}
-    </body>
-  </html>
-)
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body >
+        {children}
+      </body>
+    </html>
+  );
+}
