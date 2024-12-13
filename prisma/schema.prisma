@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  User User[]
+}
+
+model User {
+  id             String     @id @default(cuid())
+  email          String     @unique
+  hashedPassword String
+  role           Role       @relation(fields: [roleId], references: [id])
+  roleId         Int
+  documents      Document[]
+}
+
+model Category {
+  id             Int        @id @default(autoincrement())
+  title          String
+  description    String
+  imageUrl       String?
+  categories     Category[] @relation("CategoryToCategory")
+  Documents      Document[]
+  categoryParent Category?  @relation("CategoryToCategory", fields: [categoryId], references: [id])
+  categoryId     Int?
+}
+
+model Document {
+  id          Int   @id @default(autoincrement())
+  title       String
+  description String
+  content     String?
+  additional  String?
+  imageUrl    String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  Category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  addedBy     User     @relation(fields: [userId], references: [id])
+  userId      String
+  Requirement Requirement[]
+}
+
+model Requirement{
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  status      String
+  type        String
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  Document    Document @relation(fields: [documentId], references: [id])
+  documentId  Int
+}
