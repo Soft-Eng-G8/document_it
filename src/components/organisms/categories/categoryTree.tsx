@@ -1,18 +1,21 @@
-import CategoryEntry from '@/components/molecules/categoryEntry'
-import data from './dummyData.json' 
-import { Category } from './interfaces'
+import ItemEntry from '@/components/molecules/categoryEntry'
+import { ICategory, IDocument, widgetTypes } from '@/scripts/util'
 
-const categories: Category[] = data
+interface IItemTree {
+  items: ICategory[] | IDocument[]
+  compact: boolean
+  type: widgetTypes
+}
 
-const CategoryTree = () => {
+const ItemTree = ({items, compact, type}: IItemTree) => {
 
   return (
     <div className='space-y-3'>
     {
-      categories.map(category => <CategoryEntry category={category}/>)
+      items.map(item => <ItemEntry compact={compact} item={item} type={type}/>)
     }
     </div>
   )
 }
 
-export default CategoryTree
+export default ItemTree
