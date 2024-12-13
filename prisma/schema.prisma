@@ -37,10 +37,10 @@ model Category {
 }
 
 model Document {
-  id          String   @id @default(cuid())
+  id          Int   @id @default(autoincrement())
   title       String
   description String
-  content     String
+  content     String?
   additional  String?
   imageUrl    String?
   updatedAt   DateTime @updatedAt
@@ -61,5 +61,5 @@ model Requirement{
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
   Document    Document @relation(fields: [documentId], references: [id])
-  documentId  String
+  documentId  Int
 }
