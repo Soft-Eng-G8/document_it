@@ -1,49 +1,100 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import prisma from '@/lib/db'
 import { Prisma } from '@prisma/client';
+import { revalidatePath } from 'next/cache'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod';
 
-const createCategorySchema = z.object({
-    imgUrl: z.string(),
+// a testing json
+/* 
+{
+    "title": "test",
+    "description": "test",
+    "categoryId": 1,
+    "content": "test",
+    "additional": "test",
+    "imageUrl": "image",
+    "addedBy": "cm4mkotqd00007k64f5vgoss3",
+    "requirements": [
+        {
+            "title": "test",
+            "description": "test",
+            "status": "test",
+            "type": "test"
+        }
+    ]
+}
+
+ */
+
+
+/* interface CreateDocumentRequestBody {
+    title: string;
+    description: string;
+    categoryId: number;
+    content: string| null;
+    additional : string | null;
+    imageUrl: string | null;
+    addedBy: string;
+    requirements: Requirements[];
+}
+
+interface Requirements {
+    title: string;
+    description: string;
+    status: string;
+    type: string;
+} */
+
+
+const createDocumentSchema = z.object({
     title: z.string(),
     description: z.string(),
-    categoryParentId: z.number().nullable(),
+    categoryId: z.number(),
+    content: z.string().nullable(),
+    additional: z.string().nullable(),
+    imageUrl: z.string().nullable(),
+    pdfUrl: z.string().nullable(),
+    addedBy: z.string(),
+    requirements: z.array(z.object({
+        title: z.string(),
+        description: z.string(),
+        status: z.string(),
+        type: z.string(),
+    })),
 });
 
-const updateCategorySchema = z.object({
-    id: z.number(),
-    imgUrl: z.string(),
-    title: z.string(),
-    description: z.string(),
-    categoryParentId: z.number().nullable(),
-});
-
-const deleteCategorySchema = z.object({
-    id: z.number(),
-});
-
-type CreateCategoryRequestBody = z.infer<typeof createCategorySchema>;
-type UpdateCategoryRequestBody = z.infer<typeof updateCategorySchema>;
-type DeleteCategoryRequestBody = z.infer<typeof deleteCategorySchema>;
+type CreateDocumentRequestBody = z.infer<typeof createDocumentSchema>;
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
-        createCategorySchema.parse(body);
-        const { imgUrl, title, description, categoryParentId } = body as CreateCategoryRequestBody;
-
-        await prisma.category.create({
+        const myobj = await request.json() as CreateDocumentRequestBody;
+        const { title, description, categoryId, content, additional, imageUrl, addedBy, requirements } = myobj;
+        createDocumentSchema.parse(myobj);
+        const doc = await prisma.document.create({
             data: {
                 title: title,
                 description: description,
-                imageUrl: imgUrl,
-                categoryId: categoryParentId,
+                categoryId: categoryId,
+                content: content,
+                additional: additional,
+                imageUrl: imageUrl,
+                userId: addedBy,
+                pdfUrl: myobj.pdfUrl,
             },
         });
-
-        revalidatePath("/categories");
-        return NextResponse.json("Category created successfully", { status: 200 });
+        for (const req of requirements) {
+            await prisma.requirement.create({
+                data: {
+                    title: req.title,
+                    description: req.description,
+                    status: req.status,
+                    type: req.type,
+                    documentId: doc.id,
+                },
+            });
+        }
+        revalidatePath("/documents");
+        return NextResponse.json("Document created  successfully", { status: 200 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             console.error('Validation error:', error.errors);
@@ -69,25 +120,66 @@ export async function POST(request: NextRequest) {
         }
     }
 }
+
+
+const updateDocumentSchema = z.object({
+    docId: z.number(),
+    title: z.string(),
+    description: z.string(),
+    categoryId: z.number(),
+    content: z.string().nullable(),
+    additional: z.string().nullable(),
+    imageUrl: z.string().nullable(),
+    pdfUrl: z.string().nullable(),
+    addedBy: z.string(),
+    requirements: z.array(z.object({
+        title: z.string(),
+        description: z.string(),
+        status: z.string(),
+        type: z.string(),
+    })),
+});
+
+type UpdateDocumentRequestBody = z.infer<typeof updateDocumentSchema>;
 
 export async function PUT(request: NextRequest) {
     try {
-        const body = await request.json();
-        updateCategorySchema.parse(body);
-        const { id, imgUrl, title, description, categoryParentId } = body as UpdateCategoryRequestBody;
-
-        await prisma.category.update({
-            where: { id: id },
+        const myobj = await request.json() as UpdateDocumentRequestBody;
+        const { docId,title, description, categoryId, content, additional, imageUrl, addedBy, requirements } = myobj;
+        updateDocumentSchema.parse(myobj);
+        const doc = await prisma.document.update({
+            where: {
+                id: docId,
+            },
             data: {
                 title: title,
                 description: description,
-                imageUrl: imgUrl,
-                categoryId: categoryParentId,
+                categoryId: categoryId,
+                content: content,
+                additional: additional,
+                imageUrl: imageUrl,
+                userId: addedBy,
+                pdfUrl: myobj.pdfUrl,
             },
         });
-
-        revalidatePath("/categories");
-        return NextResponse.json("Category updated successfully", { status: 200 });
+        await prisma.requirement.deleteMany({
+            where: {
+                documentId: doc.id,
+            },
+        });
+        for (const req of requirements) {
+            await prisma.requirement.create({
+                data: {
+                    title: req.title,
+                    description: req.description,
+                    status: req.status,
+                    type: req.type,
+                    documentId: doc.id,
+                },
+            });
+        }
+        revalidatePath("/documents");
+        return NextResponse.json("Document updated successfully", { status: 200 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             console.error('Validation error:', error.errors);
@@ -107,25 +199,35 @@ export async function PUT(request: NextRequest) {
         } else if (error instanceof Prisma.PrismaClientValidationError) {
             console.error('Prisma validation error:', error);
             return NextResponse.json({ error: 'Validation error occurred' }, { status: 400 });
-        } else {
-            console.error('Unexpected error:', error);
-            return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
         }
+        console.error('Unexpected error:', error);
+        return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
     }
 }
+
+const deleteDocumentSchema = z.object({
+    docId: z.number(),
+});
+
+type DeleteDocumentRequestBody = z.infer<typeof deleteDocumentSchema>;
 
 export async function DELETE(request: NextRequest) {
     try {
-        const body = await request.json();
-        deleteCategorySchema.parse(body);
-        const { id } = body as DeleteCategoryRequestBody;
-
-        await prisma.category.delete({
-            where: { id: id },
+        const myobj = await request.json() as DeleteDocumentRequestBody;
+        const { docId } = myobj;
+        deleteDocumentSchema.parse(myobj);
+        await prisma.requirement.deleteMany({
+            where: {
+                documentId: docId,
+            },
         });
-
-        revalidatePath("/categories");
-        return NextResponse.json("Category deleted successfully", { status: 200 });
+        await prisma.document.delete({
+            where: {
+                id: docId,
+            },
+        });
+        revalidatePath("/documents");
+        return NextResponse.json("Document deleted successfully", { status: 200 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             console.error('Validation error:', error.errors);
@@ -145,9 +247,9 @@ export async function DELETE(request: NextRequest) {
         } else if (error instanceof Prisma.PrismaClientValidationError) {
             console.error('Prisma validation error:', error);
             return NextResponse.json({ error: 'Validation error occurred' }, { status: 400 });
-        } else {
-            console.error('Unexpected error:', error);
-            return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
         }
+        console.error('Unexpected error:', error);
+        return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
     }
 }
+
