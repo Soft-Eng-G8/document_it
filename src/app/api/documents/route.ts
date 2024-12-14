@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
             });
         }
         revalidatePath("/documents");
-        return NextResponse.json("Document created  successfully", { status: 200 });
+        return NextResponse.json("Document created successfully", { status: 200 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             console.error('Validation error:', error.errors);
