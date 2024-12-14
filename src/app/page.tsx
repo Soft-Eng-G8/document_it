@@ -1,3 +1,4 @@
+
 "use client"
 
 import SectionAbout from "@/components/organisms/home/about";
