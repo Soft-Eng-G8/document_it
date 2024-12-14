@@ -17,7 +17,7 @@ const HomeFooter = () => (
     <h4 className="text-xl">Design by&nbsp;
       <span className="text-blue-400">Lazib Redhouane</span>
        &nbsp;and&nbsp;
-       <span className="text-blue-400">Arabat Abd-Elhakim</span>
+       <span className="text-blue-400">Arabet Abd-Elhakim</span>
        </h4>
   </div>
   </footer>
