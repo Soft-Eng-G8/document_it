@@ -3,7 +3,7 @@ import SearchBar from "../molecules/searchBar";
 import { CircleUser, FileText, Pencil } from "lucide-react";
 
 const Navbar = () => (
-  <nav className="shadow-md h-[4rem]">
+  <nav className="shadow-md h-[4rem] bg-mywhite">
     <div className="py-2 px-5 w-full h-full">
       <div className="flex justify-between">
         <SearchBar />

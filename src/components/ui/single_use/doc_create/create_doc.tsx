@@ -332,17 +332,17 @@ function DocsCreate({categories}: catInterface) {
             </div>
       <div className="flex h-screen bg-mygrey">
         <div className="flex flex-col h-[800px] w-full xl:w-3/12 bg-mygrey p-10 xl:p-4 xl:ml-20">
-          <div className="relative flex-1 bg-background rounded-lg shadow-lg h-[500px]">
+          <div className="relative flex-1 bg-mygrey rounded-lg shadow-lg h-[500px]">
             <div className="absolute top-0 left-0 w-full bg-white p-6 rounded-tr-lg rounded-tl-lg shadow-lg">
               <h1 className='font-semibold text-black text-xl mb-2'>{phases[currentPhase].title}</h1>
               <Progress value={progress} className="w-full" />
             </div>
 
-            <div className="flex justify-center absolute top-24 left-0 right-0 bottom-16 overflow-y-auto overflow-x-hidden p-4 bg-background text-black">
+            <div className="flex justify-center absolute top-24 left-0 right-0 bottom-16 overflow-y-auto overflow-x-hidden p-4 bg-mygrey text-black">
               {phases[currentPhase].content({ formData, setFormData, errors })}
             </div>
 
-            <div className="absolute bottom-0 left-0 w-full bg-background text-black p-4 shadow-lg">
+            <div className="absolute bottom-0 left-0 w-full bg-mygrey text-black p-4 shadow-lg">
               <Button onClick={handleNextPhase} className="w-full">
                 {currentPhase < phases.length - 1 ? "Next Phase" : "Finish"}
               </Button>
