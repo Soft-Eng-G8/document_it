@@ -67,12 +67,9 @@ type CreateDocumentRequestBody = z.infer<typeof createDocumentSchema>;
 
 export async function POST(request: NextRequest) {
     try {
-        console.log("we're here ");
         const myobj = await request.json() as CreateDocumentRequestBody;
         const { title, description, categoryId, content, additional, imageUrl, addedBy, requirements,pdfUrl } = myobj;
         createDocumentSchema.parse(myobj);
-        console.log("we're here 2");
-        console.log(myobj);
         const doc = await prisma.document.create({
             data: {
                 title: title,
@@ -100,27 +97,27 @@ export async function POST(request: NextRequest) {
         return NextResponse.json("Document created  successfully", { status: 200 });
     } catch (error) {
         if (error instanceof z.ZodError) {
-            console.error('Validation error:', error.errors);
+            //console.error('Validation error:', error.errors);
             return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
         } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
             //console.error('Prisma known request error:', error);
             return NextResponse.json({ error: 'Known request error occurred', 
                 details: error.message
-             }, { status: 400 });
+            }, { status: 400 });
         } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
-            console.error('Prisma unknown request error:', error);
-            return NextResponse.json({ error: 'Unknown request error occurred' }, { status: 500 });
+            //console.error('Prisma unknown request error:', error);
+            return NextResponse.json({ error: 'Unknown request error occurred'}, { status: 500 });
         } else if (error instanceof Prisma.PrismaClientRustPanicError) {
-            console.error('Prisma Rust panic error:', error);
+            //console.error('Prisma Rust panic error:', error);
             return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
         } else if (error instanceof Prisma.PrismaClientInitializationError) {
-            console.error('Prisma initialization error:', error);
+            //console.error('Prisma initialization error:', error);
             return NextResponse.json({ error: 'Initialization error occurred' }, { status: 500 });
         } else if (error instanceof Prisma.PrismaClientValidationError) {
-            console.error('Prisma validation error:', error);
-            return NextResponse.json({ error: 'Validation error occurred' }, { status: 400 });
+            //console.error('Prisma validation error:', error);
+            return NextResponse.json({ error: 'Validation error occurred',details: error.message}, { status: 400 });
         } else {
-            console.error('Unexpected error:', error);
+            //console.error('Unexpected error:', error);
             return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
         }
     }

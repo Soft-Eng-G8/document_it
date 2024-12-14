@@ -18,13 +18,8 @@ type FormData = z.infer<typeof formDataSchema>;
 export async function POST(request: NextRequest) {
     try {
         const data = await request.formData();
-        console.log(data);
         const origin = await request.headers.get('origin');
-
-// Construct the absolute URL
         const url = `${origin}/api/documents`;
-        console.log(url);
-        // Get the files array, which might be empty
         const files = data.getAll('files') as File[];
         const requirement = data.getAll('requirements') as string[]
 
@@ -38,10 +33,8 @@ export async function POST(request: NextRequest) {
             logo: data.get('logo') as File,
             files: files.length > 0 ? files : undefined, // Assign if not empty
         };
-
         formDataSchema.parse(formData);
-        console.log(formData);
-        console.log("data parsed!");
+
         // Upload logo if present
         let logoUrl: string | null = null;
         if (formData.logo) {
@@ -88,20 +81,20 @@ export async function POST(request: NextRequest) {
         });
         console.log("data sent to principal document creation route!");
         if (!response.ok) {
-            const error = await response.json();
-            console.error('Error:', error);
-            return NextResponse.json({ error: 'Failed to create document' }, { status: 500 });
+            const detail = await response?.statusText;
+            // console.error('Error:', error);
+            return NextResponse.json({ error: 'Failed to create document', details: detail }, { status: 500 });
         }
         return NextResponse.json({ message: 'Document created successfully' }, { status: 201 });
     } catch (error) {
         if (error instanceof z.ZodError) {
-            console.error('Validation error:', error.errors);
+            //console.error('Validation error:', error.errors);
             return NextResponse.json(
                 { error: 'Validation error', details: error.errors },
                 { status: 400 }
             );
         } else {
-            console.error('Unexpected error:', error);
+            //console.error('Unexpected error:', error);
             return NextResponse.json({ error: 'Unexpected error occurred',details: error}, { status: 500 });
         }
     }
