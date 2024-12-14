@@ -19,16 +19,16 @@ import {
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_uses/alert"
 import { Navbar } from "@/components/ui/multiple_uses/navbar"
+import prisma from "@/lib/db"
 
 interface FormData {
-  documentName: string;
-  organizationName: string;
-  category: string;
-  preference: string;
+  title: string;
+  additionalOrg: string;
+  categoryId: string;
   description: string;
-  logoUrl: string;
+  imageUrl: string;
   requirements: string[];
-  observations: string;
+  additionalContent: string;
   logo: File | null;
   files: { name: string; file: File }[];
 }
@@ -43,14 +43,14 @@ const phases = [
         <p>Please fill out the following information:</p>
         <Input 
           placeholder="Document Name" 
-          value={formData.documentName}
-          onChange={(e) => setFormData(prev => ({ ...prev, documentName: e.target.value }))}
+          value={formData.title}
+          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
           required
         />
         <Input 
           placeholder="Organization Name" 
-          value={formData.organizationName}
-          onChange={(e) => setFormData(prev => ({ ...prev, organizationName: e.target.value }))}
+          value={formData.additionalOrg}
+          onChange={(e) => setFormData(prev => ({ ...prev, additionalOrg: e.target.value }))}
           required
         />
         <Textarea 
@@ -62,14 +62,14 @@ const phases = [
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary">{formData.category || "Category"}</Button>
+              <Button variant="secondary">{formData.categoryId || "Category"}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>Select Category</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup 
-                value={formData.category}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                value={formData.categoryId}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}
               >
                 <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
@@ -134,8 +134,8 @@ const phases = [
           <Label htmlFor="observations">Observations</Label>
           <Textarea
             id="observations"
-            value={formData.observations}
-            onChange={(e) => setFormData(prev => ({ ...prev, observations: e.target.value }))}
+            value={formData.additionalContent}
+            onChange={(e) => setFormData(prev => ({ ...prev, additionalContent: e.target.value }))}
             placeholder="Enter your observations"
             className="min-h-[100px]"
           />
@@ -167,7 +167,7 @@ const phases = [
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                setFormData(prev => ({ ...prev, logo: file, logoUrl: URL.createObjectURL(file) }));
+                setFormData(prev => ({ ...prev, logo: file, imageUrl: URL.createObjectURL(file) }));
               }
             }}
           />
@@ -222,11 +222,11 @@ const phases = [
         <h3 className="text-lg font-semibold">Review your document</h3>
         <p>Please review the information you've entered:</p>
         <ul className="list-disc list-inside space-y-2">
-          <li>Document Name: {formData.documentName}</li>
-          <li>Organization Name: {formData.organizationName}</li>
-          <li>Category: {formData.category}</li>
+          <li>Document Name: {formData.title}</li>
+          <li>Organization Name: {formData.additionalOrg}</li>
+          <li>Category: {formData.categoryId}</li>
           <li>Requirements: {formData.requirements.length}</li>
-          <li>Observations: {formData.observations ? "Provided" : "Not provided"}</li>
+          <li>Observations: {formData.additionalContent ? "Provided" : "Not provided"}</li>
           <li>Logo: {formData.logo ? "Custom logo uploaded" : "Using default logo"}</li>
           <li>PDF Files: {formData.files.length} uploaded</li>
         </ul>
@@ -241,14 +241,13 @@ function DocsCreate() {
   const [currentPhase, setCurrentPhase] = React.useState(0)
   const [errors, setErrors] = React.useState<string[]>([])
   const [formData, setFormData] = React.useState<FormData>({
-    documentName: "",
-    organizationName: "",
-    category: "",
-    preference: "",
+    title: "",
+    additionalOrg: "",
+    categoryId: "",
     description: "",
-    logoUrl: DEFAULT_LOGO_URL,
+    imageUrl: DEFAULT_LOGO_URL,
     requirements: [''],
-    observations: "",
+    additionalContent: "",
     logo: null,
     files: []
   })
@@ -256,9 +255,9 @@ function DocsCreate() {
   const validateForm = () => {
     const newErrors: string[] = [];
     if (currentPhase === 0) {
-      if (!formData.documentName) newErrors.push("Document name is required");
-      if (!formData.organizationName) newErrors.push("Organization name is required");
-      if (!formData.category) newErrors.push("Category is required");
+      if (!formData.title) newErrors.push("Document name is required");
+      if (!formData.additionalOrg) newErrors.push("Organization name is required");
+      if (!formData.categoryId) newErrors.push("Category is required");
     } else if (currentPhase === 1) {
       if (formData.requirements.length === 0 || !formData.requirements[0]) {
         newErrors.push("At least one requirement is required");
@@ -274,19 +273,17 @@ function DocsCreate() {
         setCurrentPhase(prev => prev + 1)
         setProgress(prev => Math.min(100, prev + 100 / phases.length))
       } else {
-        // Handle form submission or next page navigation here
         console.log("Form submitted:", formData)
         setCurrentPhase(0)
         setProgress(25)
         setFormData({
-          documentName: "",
-          organizationName: "",
-          category: "",
-          preference: "",
+          title: "",
+          additionalOrg: "",
+          categoryId: "",
           description: "",
-          logoUrl: DEFAULT_LOGO_URL,
+          imageUrl: DEFAULT_LOGO_URL,
           requirements: [''],
-          observations: "",
+          additionalContent: "",
           logo: null,
           files: []
         })
@@ -294,11 +291,12 @@ function DocsCreate() {
     }
   }
 
+  //first thing is if you wanna return navbar
   return (
     <div className='bg-mygrey'>
       <div className="sticky top-0 w-full z-50  p-4">
               <div className="flex justify-center">
-                <Navbar />
+                <div></div> 
               </div>
             </div>
       <div className="flex h-screen bg-mygrey">
@@ -339,7 +337,7 @@ function DocsCreate() {
                 <div className="mr-1"></div>
                 <p className="block mb-1 text-gray-400 ">Document Name:</p>
                 <div className="mr-16 ml-5"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.documentName}</p>
+                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.title}</p>
               </div>
               <div className="flex flex-row ml-14">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
@@ -348,7 +346,7 @@ function DocsCreate() {
                 <div className="mr-1"></div>
                 <p className="block mb-1 text-gray-400">Organization Name:</p>
                 <div className="mr-14 ml-2"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.organizationName}</p>
+                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.additionalOrg}</p>
               </div>
               <div className="flex flex-row ml-20">
                 <p className="block mb-1 text-gray-400">Description:</p>
@@ -364,7 +362,7 @@ function DocsCreate() {
                 <div className="mr-1"></div>
                 <p className="block mb-1 text-gray-400">Category:</p>
                 <div className="mr-32 ml-2"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.category}</p>
+                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.categoryId}</p>
               </div>
               <div className="flex flex-row ml-14">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
@@ -375,7 +373,7 @@ function DocsCreate() {
                 <div className="mr-32 ml-9"></div>
                 <div className="h-40 w-60 bg-mygrey rounded-sm flex items-center justify-center">
                   <img
-                    src={formData.logoUrl}
+                    src={formData.imageUrl}
                     alt="Logo"
                     className="h-32 w-32 object-cover rounded-full"
                   />
@@ -404,7 +402,7 @@ function DocsCreate() {
                 <p className="block mb-1 text-gray-400">Observations:</p>
                 <div className="mr-24 ml-3"></div>
                 <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <p className="whitespace-pre-wrap text-black break-words">{formData.observations}</p>
+                  <p className="whitespace-pre-wrap text-black break-words">{formData.additionalContent}</p>
                 </div>
               </div>
               <div className="flex flex-row ml-14">
