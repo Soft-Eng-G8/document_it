@@ -338,7 +338,7 @@ function DocsCreate({categories}: catInterface) {
               <Progress value={progress} className="w-full" />
             </div>
 
-            <div className="flex justify-center absolute top-24 left-0 right-0 bottom-16 overflow-y-auto overflow-x-hidden p-4 bg-background text-black">
+            <div className="flex justify-center absolute top-24 left-0 right-0 bottom-16 overflow-y-auto overflow-x-hidden p-4 bg-mygrye text-black">
               {phases[currentPhase].content({ formData, setFormData, errors })}
             </div>
 

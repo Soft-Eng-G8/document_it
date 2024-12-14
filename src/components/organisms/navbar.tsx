@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SearchBar from "../molecules/searchBar";
-import { CircleUser, FileText, Pencil } from "lucide-react";
+import { CircleUser, FileText, LogIn, LogOut, Pencil, UserPlus } from "lucide-react";
 
 const Navbar = () => (
   <nav className="shadow-md h-[4rem]">
@@ -14,8 +14,17 @@ const Navbar = () => (
           <Link href="/login">
             <CircleUser size={32}/>
           </Link>
-          <Link href="/doc_create">
+          <Link href="/doc_create" title="Create a Document"> 
             <Pencil size={32}/>
+          </Link>
+          <Link href='/login' title="Log In">
+            <LogIn size={32} />
+          </Link>
+          <Link href='/signup' title="Sign Up">
+            <UserPlus size={32}/>
+          </Link>
+          <Link href='/logout' title="Log Out">
+            <LogOut size={32}/>
           </Link>
         </div>
       </div>
