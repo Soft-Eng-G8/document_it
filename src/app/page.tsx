@@ -44,7 +44,7 @@ export default () => {
   
   return (
     <>
-    <header className="h-[calc(100vh-4rem)] bg-yellow-500 w-full">
+    <header className="h-[calc(100vh-4rem)] bg-yellow-500 w-full home-bg">
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="text-[8rem] text-red-500 font-thin">DOCUMENT.IT</div>
         <div id="punchline" className="text-4xl text-white">
