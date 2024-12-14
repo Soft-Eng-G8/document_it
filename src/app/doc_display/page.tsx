@@ -8,19 +8,28 @@ import AttachedFiles from '@/components/ui/single_use/doc_display/attached_files
 import { Navbar } from '@/components/ui/multiple_uses/navbar'
 
 function DocDisplay() {
-  const reqs = ["Requirement 1", "Requirement 2", "Requirement 3"]
-  const docName = "Document Name"
-  const subHeader = "This is a subheader"
-  const smallCardText = "Small"
+  const reqs = ["Copie du titre proprietaire en vigueur",
+     "Ou Contrat de Location ou la dernier quittance de loyer",
+      "ou Coupie de d'affectation pour le logement de fonction ou de service ",
+    "ou Derniere quittance des services de la SOZELGAZ",
+  "ou Derniere quittance des services des EAUX et de TELEPHONE",
+    "ou Carte d'eleceteur",
+    "ou Certificat d'hebergement",
+    "Autre document officiel justifiant l'occuption de logement"
+]
+  const docName = "Residence"
+  const subHeader = "APC"
+  const smallCardText = ""
   const logoUrl = "https://www.ensia.edu.dz/wp-content/uploads/2023/03/ensia-new-logo-1-e1677764094479.png"
   const tagsContent = ["Category", "Date", "File"]
-  const description = "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo saepe aliquid animi similique tempore, blanditiis vitae sapiente sint possimus maiores, eius id nobis, ex dolores. Accusamus blanditiis libero non iusto."
+  const description = "Le Certificat de Résidence est un document officiel attestant du lieu de résidence habituelle d’une personne. Il est délivré par les autorités locales (comme la mairie ou l’administration compétente) et sert de preuve de domicile pour diverses démarches administratives."
   const observations = "Observation 1"
   return (
+    //fix navbar later
     <div className="h-screen overflow-y-auto bg-mygrey">
       <div className="sticky top-0 w-full z-50  p-4">
         <div className="flex justify-center">
-          <Navbar />
+          <div></div>
         </div>
       </div>
       

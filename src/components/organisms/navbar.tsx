@@ -11,10 +11,10 @@ const Navbar = () => (
           <Link href="/categories">
             <FileText size={32}/>
           </Link>
-          <Link href="/profile">
+          <Link href="/login">
             <CircleUser size={32}/>
           </Link>
-          <Link href="/profile">
+          <Link href="/doc_create">
             <Pencil size={32}/>
           </Link>
         </div>

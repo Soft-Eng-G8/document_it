@@ -11,7 +11,6 @@ export default async () => {
   const document_data = await prisma.document.findMany()
   const categories = structureDocuments(document_data, categories_without_docs)
 
-
   return (
   <div className='bg-gray-300'>
     <header id="heading" className="py-64">

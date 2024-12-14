@@ -3,6 +3,8 @@
 import { ICategory,  IDocument, widgetTypes } from "@/scripts/util"
 import { ChartBarStacked, FileText, Folder, Pencil, Plus, Trash2 } from "lucide-react"
 import { ReactNode, useState } from "react"
+import { useRouter } from "next/navigation"; // Import useRouter
+
 
 interface IItemEntry {
   item: ICategory | IDocument
@@ -13,6 +15,12 @@ interface IItemEntry {
 const ItemEntry = ({item, compact, type}: IItemEntry) => {
   const [collapsed, setCollapsed] = useState(true)
   console.log(type, item)
+  const router = useRouter(); // Use the router instance
+  const handleDocumentClick = () => {
+    if (type === "document") {
+      router.push(`/doc_display`); // Navigate to a document-specific page
+    }
+  };
   return (
     <div className="item_entry mb-5">
       <div className={`
@@ -21,7 +29,10 @@ const ItemEntry = ({item, compact, type}: IItemEntry) => {
       flex items-center mt-3 ${!compact ? 'justify-between': ''}
       cursor-pointer
       `}
-      onClick={() => setCollapsed(!collapsed)}
+      onClick={() => {
+        if (type === "category") setCollapsed(!collapsed); // Toggle collapse for categories
+        if (type === "document") handleDocumentClick(); // Navigate for documents
+      }}
       >
         <div>
           {type === 'category' ?

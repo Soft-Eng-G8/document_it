@@ -1,13 +1,15 @@
 import React from 'react';
 import Login from '../../components/ui/single_use/Login';
 import { Navbar } from '@/components/ui/multiple_uses/navbar';
+  //first thing is if you wanna return navbar
 function page() {
+
   return (
     <>
     <div className='flex flex-col bg-mygrey'>
         <div className="sticky top-0 w-full z-50  p-4">
                 <div className="flex justify-center">
-                  <Navbar />
+                  <div></div>
                 </div>
               </div>
          <div 
