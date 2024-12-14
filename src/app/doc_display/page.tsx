@@ -20,7 +20,7 @@ function DocDisplay() {
   const docName = "Residence"
   const subHeader = "APC"
   const smallCardText = ""
-  const logoUrl = "https://www.ensia.edu.dz/wp-content/uploads/2023/03/ensia-new-logo-1-e1677764094479.png"
+  const logoUrl = "https://i.ibb.co/VLjJjLg/ljomhorya.png"
   const tagsContent = ["Category", "Date", "File"]
   const description = "Le Certificat de Résidence est un document officiel attestant du lieu de résidence habituelle d’une personne. Il est délivré par les autorités locales (comme la mairie ou l’administration compétente) et sert de preuve de domicile pour diverses démarches administratives."
   const observations = "Observation 1"

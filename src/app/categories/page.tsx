@@ -13,7 +13,7 @@ export default async () => {
 
   return (
   <div className='bg-gray-300'>
-    <header id="heading" className="py-64">
+    <header id="heading" className="py-64"> 
       <h1 className="
       text-center text-8xl
     ">Categories</h1>
