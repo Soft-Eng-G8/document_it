@@ -273,13 +273,37 @@ function DocsCreate({categories}: catInterface) {
     return newErrors.length === 0;
   }
 
-  const handleNextPhase = () => {
+  const handleNextPhase = async () => {
     if (validateForm()) {
       if (currentPhase < phases.length - 1) {
         setCurrentPhase(prev => prev + 1)
         setProgress(prev => Math.min(100, prev + 100 / phases.length))
       } else {
         console.log("Form submitted:", formData)
+        const dataToSend = new FormData()
+        dataToSend.append("title", formData.title);
+        dataToSend.append("additionalOrg", formData.additionalOrg);
+        dataToSend.append("categoryId", formData.categoryId);
+        dataToSend.append("description", formData.description);
+        dataToSend.append("imageUrl", formData.imageUrl);
+        formData.requirements.forEach((req) => {
+          dataToSend.append("requirements", req);
+        });
+        dataToSend.append("additionalContent", formData.additionalContent);
+        if (formData.logo) {
+          dataToSend.append("logo", formData.logo);
+        }
+        formData.files.forEach((file) => {
+          dataToSend.append("files", file.file);
+        });
+        try {
+          const response = await fetch("/api/docForm", {
+            method: "POST",
+            body: dataToSend
+          })
+        } catch (e) {
+          console.error(e)
+        }
         setCurrentPhase(0)
         setProgress(25)
         setFormData({
