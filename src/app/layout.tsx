@@ -1,11 +1,12 @@
-import "./globals.css";
+import React from "react"
+import Navbar from "@/components/organisms/navbar"
+import './globals.css'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body >
-        {children}
-      </body>
-    </html>
-  );
-}
+export default ({children}: {children: React.ReactNode}) => (
+  <html>
+    <body>
+      <Navbar></Navbar>
+      {children}
+    </body>
+  </html>
+)
