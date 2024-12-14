@@ -5,6 +5,7 @@ import SideDescription from '@/components/ui/single_use/doc_display/side_descrip
 import { Info } from 'lucide-react'
 import InfoPannel from '@/components/ui/single_use/doc_display/info_display'
 import AttachedFiles from '@/components/ui/single_use/doc_display/attached_files'
+import { Navbar } from '@/components/ui/multiple_uses/navbar'
 
 function DocDisplay() {
   const reqs = ["Requirement 1", "Requirement 2", "Requirement 3"]
@@ -17,6 +18,12 @@ function DocDisplay() {
   const observations = "Observation 1"
   return (
     <div className="h-screen overflow-y-auto bg-mygrey">
+      <div className="sticky top-0 w-full z-50  p-4">
+        <div className="flex justify-center">
+          <Navbar />
+        </div>
+      </div>
+      
     <div className="flex flex-col lg:flex-row  bg-mygrey">
       <div className="flex flex-col flex-1 p-4 space-y-10 bg-mygrey lg:ml-20 lg:mr-10">
         <MainInfoPannel docName={docName} description={subHeader} cardText={smallCardText} logo={logoUrl}/>

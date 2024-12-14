@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/multiple_uses/dropdown-menu"
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_uses/alert"
+import { Navbar } from "@/components/ui/multiple_uses/navbar"
 
 interface FormData {
   documentName: string;
@@ -295,6 +296,11 @@ function DocsCreate() {
 
   return (
     <div className='bg-mygrey'>
+      <div className="sticky top-0 w-full z-50  p-4">
+              <div className="flex justify-center">
+                <Navbar />
+              </div>
+            </div>
       <div className="flex h-screen bg-mygrey">
         <div className="flex flex-col h-[800px] w-full xl:w-3/12 bg-mygrey p-10 xl:p-4 xl:ml-20">
           <div className="relative flex-1 bg-background rounded-lg shadow-lg h-[500px]">
@@ -319,7 +325,12 @@ function DocsCreate() {
           <div className="flex items-center h-16 bg-mygrey rounded-md mb-4">
             <h1 className='font-bold text-2xl text-black'>Preview</h1>
           </div>
-          <div className="flex-1 bg-mywhite rounded-lg shadow-lg p-20 overflow-y-auto">
+          <div className="flex-1 bg-mywhite rounded-lg shadow-lg overflow-y-auto">
+            <div className="flex items-center justify-center p-4 border-b border-gray-400">
+              <p className="font-bold text-2xl  ">Create Document</p>
+            </div>
+            
+            <div className=" p-20 ">
             <div className="space-y-4">
               <div className="flex flex-row ml-14">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
@@ -412,6 +423,8 @@ function DocsCreate() {
                 </div>
               </div>
             </div>
+            </div>
+            
           </div>
         </div>
       </div>
