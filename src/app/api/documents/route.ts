@@ -67,9 +67,12 @@ type CreateDocumentRequestBody = z.infer<typeof createDocumentSchema>;
 
 export async function POST(request: NextRequest) {
     try {
+        console.log("we're here ");
         const myobj = await request.json() as CreateDocumentRequestBody;
-        const { title, description, categoryId, content, additional, imageUrl, addedBy, requirements } = myobj;
+        const { title, description, categoryId, content, additional, imageUrl, addedBy, requirements,pdfUrl } = myobj;
         createDocumentSchema.parse(myobj);
+        console.log("we're here 2");
+        console.log(myobj);
         const doc = await prisma.document.create({
             data: {
                 title: title,
@@ -79,7 +82,7 @@ export async function POST(request: NextRequest) {
                 additional: additional,
                 imageUrl: imageUrl,
                 userId: addedBy,
-                pdfUrl: myobj.pdfUrl,
+                pdfUrl: pdfUrl,
             },
         });
         for (const req of requirements) {
@@ -100,8 +103,10 @@ export async function POST(request: NextRequest) {
             console.error('Validation error:', error.errors);
             return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
         } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            console.error('Prisma known request error:', error);
-            return NextResponse.json({ error: 'Known request error occurred' }, { status: 400 });
+            //console.error('Prisma known request error:', error);
+            return NextResponse.json({ error: 'Known request error occurred', 
+                details: error.message
+             }, { status: 400 });
         } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
             console.error('Prisma unknown request error:', error);
             return NextResponse.json({ error: 'Unknown request error occurred' }, { status: 500 });

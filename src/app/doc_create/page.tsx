@@ -41,20 +41,20 @@ const phases = [
     content: ({ formData, setFormData, errors }: { formData: FormData; setFormData: React.Dispatch<React.SetStateAction<FormData>>; errors: string[] }) => (
       <div className="space-y-4">
         <p>Please fill out the following information:</p>
-        <Input 
-          placeholder="Document Name" 
+        <Input
+          placeholder="Document Name"
           value={formData.title}
           onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
           required
         />
-        <Input 
-          placeholder="Organization Name" 
+        <Input
+          placeholder="Organization Name"
           value={formData.additionalOrg}
           onChange={(e) => setFormData(prev => ({ ...prev, additionalOrg: e.target.value }))}
           required
         />
-        <Textarea 
-          placeholder="Description" 
+        <Textarea
+          placeholder="Description"
           value={formData.description}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
           className="min-h-[100px]"
@@ -67,7 +67,7 @@ const phases = [
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>Select Category</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup 
+              <DropdownMenuRadioGroup
                 value={formData.categoryId}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}
               >
@@ -267,13 +267,37 @@ function DocsCreate() {
     return newErrors.length === 0;
   }
 
-  const handleNextPhase = () => {
+  const handleNextPhase = async () => {
     if (validateForm()) {
       if (currentPhase < phases.length - 1) {
         setCurrentPhase(prev => prev + 1)
         setProgress(prev => Math.min(100, prev + 100 / phases.length))
       } else {
         console.log("Form submitted:", formData)
+        const dataToSend = new FormData()
+        dataToSend.append("title", formData.title);
+        dataToSend.append("additionalOrg", formData.additionalOrg);
+        dataToSend.append("categoryId", formData.categoryId);
+        dataToSend.append("description", formData.description);
+        dataToSend.append("imageUrl", formData.imageUrl);
+        formData.requirements.forEach((req) => {
+          dataToSend.append("requirements", req);
+        });
+        dataToSend.append("additionalContent", formData.additionalContent);
+        if (formData.logo) {
+          dataToSend.append("logo", formData.logo);
+        }
+        formData.files.forEach((file) => {
+          dataToSend.append("files", file.file);
+        });
+        try {
+          const response = await fetch("/api/docForm", {
+            method: "POST",
+            body: dataToSend
+          })
+        } catch (e) {
+          console.error(e)
+        }
         setCurrentPhase(0)
         setProgress(25)
         setFormData({
@@ -295,10 +319,10 @@ function DocsCreate() {
   return (
     <div className='bg-mygrey'>
       <div className="sticky top-0 w-full z-50  p-4">
-              <div className="flex justify-center">
-                <div></div> 
-              </div>
-            </div>
+        <div className="flex justify-center">
+          <div></div>
+        </div>
+      </div>
       <div className="flex h-screen bg-mygrey">
         <div className="flex flex-col h-[800px] w-full xl:w-3/12 bg-mygrey p-10 xl:p-4 xl:ml-20">
           <div className="relative flex-1 bg-background rounded-lg shadow-lg h-[500px]">
@@ -327,102 +351,102 @@ function DocsCreate() {
             <div className="flex items-center justify-center p-4 border-b border-gray-400">
               <p className="font-bold text-2xl  ">Create Document</p>
             </div>
-            
+
             <div className=" p-20 ">
-            <div className="space-y-4">
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400 ">Document Name:</p>
-                <div className="mr-16 ml-5"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.title}</p>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">Organization Name:</p>
-                <div className="mr-14 ml-2"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.additionalOrg}</p>
-              </div>
-              <div className="flex flex-row ml-20">
-                <p className="block mb-1 text-gray-400">Description:</p>
-                <div className="mr-28 ml-2"></div>
-                <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <p className="whitespace-pre-wrap text-black break-words">{formData.description}</p>
+              <div className="space-y-4">
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400 ">Document Name:</p>
+                  <div className="mr-16 ml-5"></div>
+                  <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.title}</p>
                 </div>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">Category:</p>
-                <div className="mr-32 ml-2"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.categoryId}</p>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">Logo:</p>
-                <div className="mr-32 ml-9"></div>
-                <div className="h-40 w-60 bg-mygrey rounded-sm flex items-center justify-center">
-                  <img
-                    src={formData.imageUrl}
-                    alt="Logo"
-                    className="h-32 w-32 object-cover rounded-full"
-                  />
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">Organization Name:</p>
+                  <div className="mr-14 ml-2"></div>
+                  <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.additionalOrg}</p>
                 </div>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">Requirements:</p>
-                <div className="mr-24 ml-2"></div>
-                <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <ul className="list-decimal list-inside">
-                    {formData.requirements.map((req, index) => (
-                      <li key={index} className="text-black break-words">{req}</li>
-                    ))}
-                  </ul>
+                <div className="flex flex-row ml-20">
+                  <p className="block mb-1 text-gray-400">Description:</p>
+                  <div className="mr-28 ml-2"></div>
+                  <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
+                    <p className="whitespace-pre-wrap text-black break-words">{formData.description}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">Observations:</p>
-                <div className="mr-24 ml-3"></div>
-                <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <p className="whitespace-pre-wrap text-black break-words">{formData.additionalContent}</p>
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">Category:</p>
+                  <div className="mr-32 ml-2"></div>
+                  <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.categoryId}</p>
                 </div>
-              </div>
-              <div className="flex flex-row ml-14">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                </svg>
-                <div className="mr-1"></div>
-                <p className="block mb-1 text-gray-400">PDF Files:</p>
-                <div className="mr-28 ml-5"></div>
-                <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <ul className="list-disc list-inside">
-                    {formData.files.map((file, index) => (
-                      <li key={index} className="text-black break-words">{file.name || file.file.name}</li>
-                    ))}
-                  </ul>
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">Logo:</p>
+                  <div className="mr-32 ml-9"></div>
+                  <div className="h-40 w-60 bg-mygrey rounded-sm flex items-center justify-center">
+                    <img
+                      src={formData.imageUrl}
+                      alt="Logo"
+                      className="h-32 w-32 object-cover rounded-full"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">Requirements:</p>
+                  <div className="mr-24 ml-2"></div>
+                  <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
+                    <ul className="list-decimal list-inside">
+                      {formData.requirements.map((req, index) => (
+                        <li key={index} className="text-black break-words">{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">Observations:</p>
+                  <div className="mr-24 ml-3"></div>
+                  <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
+                    <p className="whitespace-pre-wrap text-black break-words">{formData.additionalContent}</p>
+                  </div>
+                </div>
+                <div className="flex flex-row ml-14">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  <div className="mr-1"></div>
+                  <p className="block mb-1 text-gray-400">PDF Files:</p>
+                  <div className="mr-28 ml-5"></div>
+                  <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
+                    <ul className="list-disc list-inside">
+                      {formData.files.map((file, index) => (
+                        <li key={index} className="text-black break-words">{file.name || file.file.name}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
-            
+
           </div>
         </div>
       </div>
