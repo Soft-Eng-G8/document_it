@@ -22,11 +22,11 @@ body {
     --secondary-foreground: 240 5.9% 70%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 205 82.4% 68.8%;
+    --accent: 0 0% 90%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 205 95.3% 33.7%;
+    --border: 0 0% 83%;
     --input: 240 5.9% 90%;
     --ring: 0 0% 100%;
 

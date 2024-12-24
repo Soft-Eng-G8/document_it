@@ -5,7 +5,6 @@ import './globals.css'
 export default ({children}: {children: React.ReactNode}) => (
   <html>
     <body>
-      <Navbar></Navbar>
       {children}
     </body>
   </html>
