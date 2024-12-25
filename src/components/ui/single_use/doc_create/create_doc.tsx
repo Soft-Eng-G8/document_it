@@ -21,6 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_us
 import { Navbar } from "@/components/ui/multiple_uses/navbar"
 import prisma from "@/lib/db"
 import { ICategory } from "@/scripts/util"
+import { redirect } from "next/navigation"
 
 interface FormData {
   title: string;
@@ -304,6 +305,7 @@ function DocsCreate({categories}: catInterface) {
         } catch (e) {
           console.error(e)
         }
+        redirect('/categories')
         setCurrentPhase(0)
         setProgress(25)
         setFormData({

@@ -25,9 +25,7 @@ const Navbar = async () => {
           <Link href="/categories">
             <FileText size={32}/>
           </Link>
-          <Link href="/login">
-            <CircleUser size={32}/>
-          </Link>
+
           <Link href="/doc_create" title="Create a Document"> 
             <Pencil size={32}/>
           </Link>
