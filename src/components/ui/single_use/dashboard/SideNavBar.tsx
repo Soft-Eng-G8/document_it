@@ -15,13 +15,13 @@ function SideNavBar() {
       group: 'Dashboard',
       items: [
         { link: '/dashboards', text: 'Overview', icon: <LayoutDashboard /> },
-        { link: '/users_display', text: 'Users', icon: <User /> },
+        { link: '/otherUserDisplay', text: 'Users', icon: <User /> },
         { link: '/all_contributions', text: 'Contributions', icon: <BetweenHorizontalEnd /> },
         { link: '/admin_panel', text: 'Admin Panel', icon: <Shield /> },
       ],
     },
     {
-      group: 'Group 2',
+      group: '',
       items: [
         { link: '/settings', text: 'Settings', icon: <Settings /> },
         { link: '/logout', text: 'Logout', icon: <LogOut /> },
@@ -34,9 +34,7 @@ function SideNavBar() {
       <div>
         <UserItem />
       </div>
-      <div className='mt-10'>
-        <div>
-          <div>
+          <div className='flex justify-between flex-col h-[700px] '>
             {menuList.map((menu, key) => (
               <div key={key}>
               <h3 className="text-sm font-semibold text-gray-700 uppercase mb-4 mt-6">{menu.group}</h3>
@@ -60,8 +58,6 @@ function SideNavBar() {
             </div>
             ))}
           </div>
-        </div>
-      </div>
  
     
     </div>

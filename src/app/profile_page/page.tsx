@@ -51,8 +51,8 @@ function ProfilePage() {
                   <div className="flex items-end text-[25px] font-bold">
                     <span className="text-foreground mr-3">{contributions}</span>
                     <span className="text-black">Contributions</span>
-                    <span className="ml-4 font-medium text-[16px] text-blue-500">see all</span>
-                    <span className="text-[1px] text-blue-500">
+                    <span className="ml-4 font-medium text-[16px] text-blue-500 hover:cursor-pointer">see all</span>
+                    <span className="text-[1px] text-blue-500 hover:cursor-pointer">
                       <ChevronRight />
                     </span>
                   </div>

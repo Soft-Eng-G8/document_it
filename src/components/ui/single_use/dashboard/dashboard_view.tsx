@@ -5,8 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SideNavBar from './SideNavBar';
 import Header from './header';
 import AdminPanel from '@/app/admin_panel/page';
-import UsersDisplay from '@/app/users_display/pages';
 import DashboardItem from './dashboard_item';
+import UsersDisplay from '@/app/otherUserDisplay/page';
 
 function DashboardView() {
   return (
@@ -16,11 +16,12 @@ function DashboardView() {
         <div className="w-full h-full">
           <Header />
           <div className="p-4">
-            <Routes>
+           {/* <Routes>
               <Route path="/dashboards" element={<DashboardItem />} />
-              <Route path="/users_display" element={<UsersDisplay />} />
+              <Route path="/otherUserDisplay" element={<UsersDisplay />} />
               <Route path="/admin_panel" element={<AdminPanel />} />
-            </Routes>
+            </Routes>*/}
+            <AdminPanel/>
           </div>
         </div>
       </div>
