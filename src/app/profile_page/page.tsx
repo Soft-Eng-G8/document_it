@@ -2,6 +2,7 @@ import DocumentItCartd from '@/components/ui/single_use/dashboard/Cards/Document
 import Header from '@/components/ui/single_use/dashboard/header'
 import Badge from '@/components/ui/single_use/profile_page/badge';
 import PFP from '@/components/ui/single_use/profile_page/PFP'
+import { ChevronRight } from 'lucide-react';
 import React from 'react'
 import { date } from 'zod';
 
@@ -47,9 +48,13 @@ function ProfilePage() {
             <div>
             <div className='w-[500px] h-full bg-white shadow-inner-custom rounded-lg flex  bg-myLightBlue justify-center mt-10 ml-20 p-4'>
                 <div className='flex-1'>
-                  <div className='text-[25px] font-bold'>
-                    <span className='text-foreground mr-3'>{contributions}</span>
-                    <span className='text-black'>Contributions</span>
+                  <div className="flex items-end text-[25px] font-bold">
+                    <span className="text-foreground mr-3">{contributions}</span>
+                    <span className="text-black">Contributions</span>
+                    <span className="ml-4 font-medium text-[16px] text-blue-500">see all</span>
+                    <span className="text-[1px] text-blue-500">
+                      <ChevronRight />
+                    </span>
                   </div>
 
                   <div className='text-[25px] font-bold mb-10'>
