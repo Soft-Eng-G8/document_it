@@ -1,17 +1,33 @@
+import Link from "next/link"
 
 interface IButton {
-  text: string
-  invert: boolean
-  rounded: boolean
-  
+  children: string
+  invert?: boolean
+  rounded?: boolean
+  href?: string
+  action?: CallableFunction
 }
 
-const Button = (props: IButton) => (
+const Btn = (props: IButton) => (
   <button
-    className={``}
+    className={`
+      bg-[#2292E2] text-white
+      px-4 py-6 
+      ${props.rounded ? 'rounded-full' : ''}
+    `}
   >
-    {props.text}
+    {props.children}
   </button>
+)
+
+const Button = (props: IButton) => (
+  props.href ? 
+  <Link href={props.href}>
+    <Btn {...props} />  
+  </Link>
+  : 
+  <Btn {...props} />
+
 )
 
 
