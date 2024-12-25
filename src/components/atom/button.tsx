@@ -12,7 +12,7 @@ const Btn = (props: IButton) => (
   <button
     className={`
       bg-[#2292E2] text-white
-      px-4 py-6 
+      px-8 py-4 
       ${props.rounded ? 'rounded-full' : ''}
     `}
   >
