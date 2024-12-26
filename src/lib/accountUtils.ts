@@ -1,3 +1,4 @@
+//? This is for unifying how accounts are created, to make adding OAuth later on easier
 import prisma from "./db";
 
 interface OAuthData {

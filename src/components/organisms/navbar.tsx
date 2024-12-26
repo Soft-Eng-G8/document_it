@@ -26,6 +26,7 @@ const Navbar = () => {
             <FileText size={32}/>
           </Link>
 
+          //? Below is how roles might be used. Dynamic loading and stuff may be possible, but we'll see. For now they're added via code. We might make functions to make them check permissions for roles instead, but again, we'll see 
           {status === 'authenticated' && session.user.roles.find(role => role.name === 'STAFF') && (
             <Link href="/doc_create" title="Create a Document"> 
               <Pencil size={32}/>

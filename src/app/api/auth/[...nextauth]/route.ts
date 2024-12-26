@@ -1,3 +1,4 @@
+//? Check options for actual info
 import NextAuth from 'next-auth'
 import { options } from './options'
 

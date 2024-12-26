@@ -1,4 +1,5 @@
 
+//? This route is for API calls, so the bouchrikians can make/auth users from outside sources. Actual in-app auth is in [...nextauth]
 import { createAccount } from "@/lib/accountUtils";
 import { PrismaClient } from "@prisma/client";
 import { hash, verify } from "argon2";
