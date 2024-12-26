@@ -1,12 +1,16 @@
+'use client'
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "../molecules/searchBar";
 import { CircleUser, FileText, LogIn, LogOut, Pencil, UserPlus } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 
-const Navbar = async () => {
-
-
+const Navbar = () => {
+  const {
+    data: session, status
+  } = useSession()
+  console.log(session)
   return(
   <nav className="shadow-md h-[4rem] bg-mywhite">
     <div className="py-2 px-5 w-full h-full">
@@ -22,15 +26,22 @@ const Navbar = async () => {
             <FileText size={32}/>
           </Link>
 
-          <Link href="/doc_create" title="Create a Document"> 
-            <Pencil size={32}/>
+          {status === 'authenticated' && session.user.roles.find(role => role.name === 'STAFF') && (
+            <Link href="/doc_create" title="Create a Document"> 
+              <Pencil size={32}/>
+            </Link>
+          )}
+          {status === 'authenticated' && (
+          <Link href="/" title="Logout" onClick={() => signOut()}> 
+            <LogOut size={32}/>
           </Link>
+          )}
+          {status === 'unauthenticated' && (
           <Link href="/login" title="Login"> 
             <LogIn size={32}/>
           </Link>
-          <Link href="/logout" title="Logout"> 
-            <LogOut size={32}/>
-          </Link>
+          )}
+          
         </div>
       </div>
     </div>
