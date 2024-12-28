@@ -64,6 +64,9 @@ export default {
 		  boxShadow: {
 			'inner-custom': 'inset 0px 4px 10px rgba(0, 0, 0, 0.2)',
 		  },
+		  backgroundImage: {
+			'card-gradient': 'radial-gradient(circle, transparent var(--big-circle-r), var(--card-color) calc(var(--big-circle-r) + 1px))',
+		  },
   	}
   },
   plugins: [require("tailwindcss-animate")],
