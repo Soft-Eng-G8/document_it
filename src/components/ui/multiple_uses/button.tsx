@@ -19,6 +19,8 @@ const buttonVariants = cva(
           "bg-mywhite text-black shadow-sm hover:bg-mywhite/70",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        dashboard:
+          "bg-black text-mywhite shadow-sm hover:bg-mywhite/70",
       },
       size: {
         default: "h-9 px-9 py-3",
