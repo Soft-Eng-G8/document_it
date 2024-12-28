@@ -1,31 +1,41 @@
 "use client";
-
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SideNavBar from './SideNavBar';
-import Header from './header';
-import AdminPanel from '@/app/admin_panel/page';
-import DashboardItem from './dashboard_item';
-import UsersDisplay from '@/app/otherUserDisplay/page';
+import React, { useState } from "react";
+import SideNavBar from "./SideNavBar";
+import Header from "./header";
+import AdminPanel from "@/app/admin_panel/page";
+import DashboardItem from "./dashboard_item";
+import UsersDisplay from "@/app/otherUserDisplay/page";
 
 function DashboardView() {
+  const [selectedMenu, setSelectedMenu] = useState("overview");
+
+  const renderContent = () => {
+    switch (selectedMenu) {
+      case "overview":
+        return <DashboardItem />;
+      case "users":
+        return <UsersDisplay />;
+      case "contributions":
+        return <div>Contributions Component</div>; 
+      case "adminPanel":
+        return <AdminPanel />;
+      case "settings":
+        return <div>Settings Component</div>; 
+      case "logout":
+        return <div>Logout Component</div>; 
+      default:
+        return <div>Not Found</div>;
+    }
+  };
+
   return (
-    <Router>
-      <div className="flex items-start justify-between">
-        <SideNavBar />
-        <div className="w-full h-full">
-          <Header />
-          <div className="p-4">
-           {/* <Routes>
-              <Route path="/dashboards" element={<DashboardItem />} />
-              <Route path="/otherUserDisplay" element={<UsersDisplay />} />
-              <Route path="/admin_panel" element={<AdminPanel />} />
-            </Routes>*/}
-            <AdminPanel/>
-          </div>
-        </div>
+    <div className="flex items-start min-h-screen">
+      <SideNavBar onMenuSelect={setSelectedMenu} />
+      <div className="flex-1">
+        <Header />
+        <div className="p-4">{renderContent()}</div>
       </div>
-    </Router>
+    </div>
   );
 }
 
