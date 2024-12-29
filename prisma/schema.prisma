@@ -29,7 +29,10 @@ model User {
 
   documents         Document[]
 
-  Contribution      Contribution[]
+  contributions     Contribution[] @relation("ContributionUser")
+
+  reviews           Contribution[] @relation("ContributionReviewer")
+
 }
 
 model Account {
@@ -96,21 +99,31 @@ model Requirement{
 
 model Contribution {
   id                String          @id @default(cuid())
-  userid            String
-  user              User            @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userId            String
+  user              User            @relation("ContributionUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewerId        String?
+  reviewer          User?            @relation("ContributionReviewer", fields: [reviewerId], references: [id])
 
-  documentId        String          @unique
+  documentId        String
   document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   status            String          @default("PENDING") // Accepted, Rejected
-  type              String          @default("saluso")
+  type              String          @default("NEW") // EDIT
+  createdAt         DateTime        @default(now())
+  verifiedAt        DateTime?       
 
-  titleChange       String?
-  DescriptionChange String?
-  ContentChange     String?
-  AdditionalChange  String?
-  ImageURLChange    String?
-  PdfURLChange      String?
+  oldTitle          String?
+  newTitle          String
+  oldDescription    String?
+  newDescription    String
+  oldContent        String?
+  newContent        String?
+  oldAdditional     String?
+  newAdditional     String?
+  oldImageURL       String?
+  newImageURL       String?
+  oldPdfURL         String?
+  newPdfURL         String?
 }
 
 
