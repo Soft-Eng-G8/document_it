@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,6 +10,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/multiple_uses/resizable";
+import LoginPanel from './login_panel';
+import SignUpPanel from './sign_up';
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -46,6 +49,18 @@ export function ProfileForm() {
 
 
 function Login() {
+
+  const [isLogin, setIsLogin] = useState(true);
+  const [forgotPass, setForgotPass] = useState(false);
+
+  const togglePanel = () => {
+    setIsLogin((prev) => !prev);
+  };
+
+  const toggleForgotPass = () =>{
+    setForgotPass((prev)=>!prev)
+  };
+
   return (
     <div className="container flex items-center justify-center   ">
       <ResizablePanelGroup
@@ -63,37 +78,17 @@ function Login() {
           </div>
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel defaultSize={50} className="bg-mywhite">
-          <div className="flex flex-col h-[600px] p-6 text-secondary-foreground">
-            <div className="flex flex-col items-center space-y-2">
-              <span className="font-bold text-2xl text-primary">Docs</span>
-              
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1 space-y-4">
-            <span className="font-medium text-lg">Welcome To Docs</span>
-              <div className="w-full max-w-xs">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  User Name or Email
-                </label>
-                <Input id="username" type="text" />
-              </div>
-              <div className="w-full max-w-xs">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <Input id="password" type="password" />
-              </div>
-              <a
-                href="#"
-                className="text-sm text-background font-semibold hover:underline"
-              >
-                Forgot Password?
-              </a>
-              <Button className="text-mywhite font-semibold rounded-md w-full max-w-xs">
-                Login
-              </Button>
-            </div>
-          </div>
+    <ResizablePanel defaultSize={50} className="bg-mywhite">
+        {forgotPass? <h1>hi</h1>: isLogin ? <LoginPanel /> : <SignUpPanel />}
+        <div className='flex flex-row justify-center items-center p-4'>
+        <h1 className='text-black '>
+          {forgotPass? "": isLogin? "Not a member?": "Already have an account?"}
+        </h1>
+        <button onClick={forgotPass? toggleForgotPass : togglePanel} className='bg-transparent text-foreground pl-4 font-bold'>
+          
+         {forgotPass? "Back to Login": isLogin ? "Sign Up" : "Login"}
+        </button>
+        </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

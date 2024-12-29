@@ -1,5 +1,5 @@
 import React from 'react';
-import Login from '../../components/ui/single_use/Login';
+import Login from '../../components/ui/single_use/login_form/Login';
 import { Navbar } from '@/components/ui/multiple_uses/navbar';
   //first thing is if you wanna return navbar
 function page() {
