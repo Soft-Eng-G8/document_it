@@ -11,17 +11,17 @@ datasource db {
 }
 
 model Role {
-  id                String    @id @default(cuid())
+  id                String          @id @default(cuid())
   name              String
   users             User[]
 }
 
 model User {
-  id                String     @id @default(cuid())
-  name              String     @unique
-  email             String?     @unique
+  id                String          @id @default(cuid())
+  name              String          @unique
+  email             String?         @unique
   hashedPassword    String
-  createdAt         DateTime   @default(now())
+  createdAt         DateTime        @default(now())
 
   accountId         String
   account           Account?
@@ -33,12 +33,12 @@ model User {
 }
 
 model Account {
-  id                String @id @default(cuid())
+  id                String          @id @default(cuid())
   provider          String
   providerAccountID String
 
-  userId            String @unique
-  user              User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // Credential-based
   username          String?
@@ -50,59 +50,115 @@ model Account {
 }
 
 model Category {
-  id                Int        @id @default(autoincrement())
+  id                Int             @id @default(autoincrement())
   title             String
   description       String
   imageUrl          String?
-  categories        Category[] @relation("CategoryToCategory")
+  categories        Category[]      @relation("CategoryToCategory")
   Documents         Document[]
-  categoryParent    Category?  @relation("CategoryToCategory", fields: [categoryId], references: [id])
+  categoryParent    Category?       @relation("CategoryToCategory", fields: [categoryId], references: [id])
   categoryId        Int?
 }
 
 model Document {
-  id                String   @id @default(cuid())
+  id                String          @id @default(cuid())
   title             String
   description       String
   content           String?
   additional        String?
   imageUrl          String?
   pdfUrl            String?
-  updatedAt         DateTime @updatedAt
-  createdAt         DateTime @default(now())
-  Category          Category @relation(fields: [categoryId], references: [id])
+  status            String          @default("Unverified") // Verified
+  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime        @default(now())
+  category          Category        @relation(fields: [categoryId], references: [id])
+  requirements      Requirement[]
   categoryId        Int
-  addedBy           User     @relation(fields: [userId], references: [id])
   userId            String
+  addedBy           User            @relation(fields: [userId], references: [id])
 
-  Requirement       Requirement[]
-  Contributions      Contribution[]
+  contributions     Contribution[]
 }
 
 model Requirement{
-  id                Int      @id @default(autoincrement())
+  id                Int             @id @default(autoincrement())
   title             String
   description       String
   status            String
   type              String
-  updatedAt         DateTime @updatedAt
-  createdAt         DateTime @default(now())
+  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime        @default(now())
   
-  Document          Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  Document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
   documentId        String
 }
 
 
 model Contribution {
-  id                String @id @default(cuid())
+  id                String          @id @default(cuid())
   userid            String
-  user              User @relation(fields: [userid], references: [id], onDelete: Cascade)
+  user              User            @relation(fields: [userid], references: [id], onDelete: Cascade)
 
-  documentId        String @unique
-  document          Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId        String          @unique
+  document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  status            String @default("PENDING") // Accepted, Rejected
-  type              String @default("saluso")
+  status            String          @default("PENDING") // Accepted, Rejected
+  type              String          @default("saluso")
+
+  titleChange       TitleChange?
+  DescriptionChange DescriptionChange?
+  ContentChange     ContentChange?
+  AdditionalChange  AdditionalChange?
+  ImageURLChange    ImageURLChange?
+  PdfURLChange      PdfURLChange?
+}
 
 
+model TitleChange {
+  id                String          @id @default(cuid())
+  oldTitle          String
+  newTitle          String
+
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+}
+
+model DescriptionChange {
+  id                String          @id @default(cuid())
+  oldDescription    String
+  newDescription    String
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+}
+
+model ContentChange {
+  id                String          @id @default(cuid())
+  oldContent        String
+  newContent        String
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+}
+
+model AdditionalChange {
+  id                String          @id @default(cuid())
+  oldAdditional     String
+  newAdditional     String
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+}
+
+model ImageURLChange {
+  id                String          @id @default(cuid())
+  oldImageURL       String
+  newImageURL       String
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+}
+
+model PdfURLChange {
+  id                String          @id @default(cuid())
+  oldPdfURL         String
+  newPdfURL         String
+  contributionID    String          @unique
+  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
 }
