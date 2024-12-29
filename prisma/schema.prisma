@@ -23,7 +23,7 @@ model User {
   hashedPassword    String
   createdAt         DateTime        @default(now())
 
-  accountId         String
+  accountId         String?
   account           Account?
   roles             Role[]       
 
@@ -105,60 +105,60 @@ model Contribution {
   status            String          @default("PENDING") // Accepted, Rejected
   type              String          @default("saluso")
 
-  titleChange       TitleChange?
-  DescriptionChange DescriptionChange?
-  ContentChange     ContentChange?
-  AdditionalChange  AdditionalChange?
-  ImageURLChange    ImageURLChange?
-  PdfURLChange      PdfURLChange?
+  titleChange       String?
+  DescriptionChange String?
+  ContentChange     String?
+  AdditionalChange  String?
+  ImageURLChange    String?
+  PdfURLChange      String?
 }
 
 
-model TitleChange {
-  id                String          @id @default(cuid())
-  oldTitle          String
-  newTitle          String
+// model TitleChange {
+//   id                String          @id @default(cuid())
+//   oldTitle          String
+//   newTitle          String
 
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
 
-model DescriptionChange {
-  id                String          @id @default(cuid())
-  oldDescription    String
-  newDescription    String
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+// model DescriptionChange {
+//   id                String          @id @default(cuid())
+//   oldDescription    String
+//   newDescription    String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
 
-model ContentChange {
-  id                String          @id @default(cuid())
-  oldContent        String
-  newContent        String
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+// model ContentChange {
+//   id                String          @id @default(cuid())
+//   oldContent        String
+//   newContent        String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
 
-model AdditionalChange {
-  id                String          @id @default(cuid())
-  oldAdditional     String
-  newAdditional     String
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+// model AdditionalChange {
+//   id                String          @id @default(cuid())
+//   oldAdditional     String
+//   newAdditional     String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
 
-model ImageURLChange {
-  id                String          @id @default(cuid())
-  oldImageURL       String
-  newImageURL       String
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+// model ImageURLChange {
+//   id                String          @id @default(cuid())
+//   oldImageURL       String
+//   newImageURL       String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
 
-model PdfURLChange {
-  id                String          @id @default(cuid())
-  oldPdfURL         String
-  newPdfURL         String
-  contributionID    String          @unique
-  contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-}
+// model PdfURLChange {
+//   id                String          @id @default(cuid())
+//   oldPdfURL         String
+//   newPdfURL         String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
