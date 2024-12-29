@@ -11,30 +11,34 @@ datasource db {
 }
 
 model Role {
-  id   String    @id @default(cuid())
-  name String
-  users User[]
+  id                String    @id @default(cuid())
+  name              String
+  users             User[]
 }
 
 model User {
-  id             String     @id @default(cuid())
-  name           String     @unique
-  email          String?     @unique
-  hashedPassword String
-  createdAt      DateTime   @default(now())
+  id                String     @id @default(cuid())
+  name              String     @unique
+  email             String?     @unique
+  hashedPassword    String
+  createdAt         DateTime   @default(now())
 
-  accounts       Account[]
-  roles           Role[]       
+  accountId         String
+  account           Account?
+  roles             Role[]       
 
-  documents      Document[]
+  documents         Document[]
+
+  Contribution      Contribution[]
 }
 
 model Account {
   id                String @id @default(cuid())
   provider          String
   providerAccountID String
-  userId            String
-  user              User @relation(fields: [userId], references: [id])
+
+  userId            String @unique
+  user              User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // Credential-based
   username          String?
@@ -46,41 +50,59 @@ model Account {
 }
 
 model Category {
-  id             Int        @id @default(autoincrement())
-  title          String
-  description    String
-  imageUrl       String?
-  categories     Category[] @relation("CategoryToCategory")
-  Documents      Document[]
-  categoryParent Category?  @relation("CategoryToCategory", fields: [categoryId], references: [id])
-  categoryId     Int?
+  id                Int        @id @default(autoincrement())
+  title             String
+  description       String
+  imageUrl          String?
+  categories        Category[] @relation("CategoryToCategory")
+  Documents         Document[]
+  categoryParent    Category?  @relation("CategoryToCategory", fields: [categoryId], references: [id])
+  categoryId        Int?
 }
 
 model Document {
-  id          Int   @id @default(autoincrement())
-  title       String
-  description String
-  content     String?
-  additional  String?
-  imageUrl    String?
-  pdfUrl      String?
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
-  Category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  addedBy     User     @relation(fields: [userId], references: [id])
-  userId      String
-  Requirement Requirement[]
+  id                String   @id @default(cuid())
+  title             String
+  description       String
+  content           String?
+  additional        String?
+  imageUrl          String?
+  pdfUrl            String?
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  Category          Category @relation(fields: [categoryId], references: [id])
+  categoryId        Int
+  addedBy           User     @relation(fields: [userId], references: [id])
+  userId            String
+
+  Requirement       Requirement[]
+  Contributions      Contribution[]
 }
 
 model Requirement{
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  status      String
-  type        String
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
-  Document    Document @relation(fields: [documentId], references: [id])
-  documentId  Int
+  id                Int      @id @default(autoincrement())
+  title             String
+  description       String
+  status            String
+  type              String
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  
+  Document          Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId        String
+}
+
+
+model Contribution {
+  id                String @id @default(cuid())
+  userid            String
+  user              User @relation(fields: [userid], references: [id], onDelete: Cascade)
+
+  documentId        String @unique
+  document          Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  status            String @default("PENDING") // Accepted, Rejected
+  type              String @default("saluso")
+
+
 }
