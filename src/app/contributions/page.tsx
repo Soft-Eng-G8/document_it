@@ -1,6 +1,7 @@
 'use client'
 import {Button} from "@/components/ui/multiple_uses/button"
 import { ChevronRight, FileCheck2 } from "lucide-react"
+import { getServerSession } from "next-auth"
 import Image from "next/image"
 import { useState } from "react"
 
