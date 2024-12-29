@@ -49,7 +49,6 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   // if(req.method !== "POST") return res.status(405).json({error: 'Method not allowed'})
 
-  console.log(req.body)
   const { username, password, provider } = await req.json()
 
   if (!username || !password) {
@@ -85,7 +84,7 @@ export async function POST(req: Request) {
     const accountData = 
       provider === 'credentials' ? 
         {username, hashedPassword}:
-        { accessToken: 'actionTokenReel', refreshToken: 'refreshTokenReel', providerAccountId: 'someOauthId' } 
+        { accessToken: 'actionTokenReel', refreshToken: 'refreshTokenReel', providerAccountId: 'someOAuthId' } 
     
     await createAccount(newUser.id, provider, 'someProviderId', accountData)
   
