@@ -113,6 +113,30 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
   }
 }
 
+interface IRoles {
+  id: string
+  name: string
+  permissions: {
+    id: string
+    name: string
+    authorityLevel: number
+  }[]
+}
+export const getPerms = (roles: IRoles[]) => {
+  const perms = Object.values(
+  roles
+    .flatMap((role: IRoles) => role.permissions)
+    .reduce((acc, permission) => {
+      const existing = acc[permission.name];
+      // Keep the one with the highest authority level
+      if (!existing || permission.authorityLevel > existing.authorityLevel) {
+        acc[permission.name] = permission;
+      }
+      return acc;
+    }, {} as Record<string, IRoles['permissions'][0]>)
+  );
+  return perms
+}
 
 type tokenProp = [key: string, val: any]
 export const issueToken = (expiresIn: string, ...args: tokenProp[]) => {
