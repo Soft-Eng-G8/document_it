@@ -14,6 +14,7 @@ model Role {
   id                String          @id @default(cuid())
   name              String
   users             User[]
+  permissions       Permission[]
 }
 
 model User {
@@ -127,6 +128,13 @@ model Contribution {
   newPdfURL         String?
 }
 
+model Permission {
+  id                String          @id @default(cuid())
+  name              String
+  authorityLevel    Int             @default(0)
+
+  Role Role[]
+}
 
 // model TitleChange {
 //   id                String          @id @default(cuid())
