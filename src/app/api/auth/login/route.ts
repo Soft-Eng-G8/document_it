@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
-import { issueToken } from "@/scripts/util";
+import { getPerms, issueToken } from "@/scripts/util";
 
 
 if(!JWT_SECRET) throw new Error("No JWT_SECRET env var detected. Ask for one");
@@ -22,14 +22,19 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { name: username }, // Assuming email is used as the username
-    include: { roles: true }
+    include: { roles: {
+      include: {permissions: true}
+    }}
   });
 
+  
   if (!user) {
     return new Response(JSON.stringify({ error: "User not found" }), {
       status: 404,
     });
   }
+
+  const perms = getPerms(user.roles)
 
   // Compare the password
   const isValidPassword = await verify(user.hashedPassword, password);
@@ -40,7 +45,7 @@ export async function POST(req: Request) {
   }
 
   // Return user information as asession token
-  const token = issueToken("7d", ['id', user.id], ['name', user.name], ['roles', user.roles])
+  const token = issueToken("7d", ['id', user.id], ['name', user.name], ['perms', perms])
   
   return new Response(JSON.stringify({ token }), {status: 200})
 }

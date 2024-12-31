@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
-import { issueToken } from "@/scripts/util";
+import { getPerms, issueToken } from "@/scripts/util";
 
 
 export async function POST(req: Request) {
@@ -34,8 +34,15 @@ export async function POST(req: Request) {
         roles: {
           connect: { id: role!.id }
         }
-      }, include: {roles: true}
+      }, 
+      include: {
+        roles: {
+          include: {
+            permissions: true
+          }
+      }}
     })
+    const perms = getPerms(newUser.roles)
     const accountData = 
       provider === 'credentials' ? 
         {username, hashedPassword}:
@@ -43,7 +50,7 @@ export async function POST(req: Request) {
     
     await createAccount(newUser.id, provider, 'someProviderId', accountData)
   
-    const token = issueToken("7d", ['id', newUser.id], ['name', newUser.name], ['roles', newUser.roles])
+    const token = issueToken("7d", ['id', newUser.id], ['name', newUser.name], ['permissions', perms])
     return new Response(JSON.stringify({ token }), {status: 200})
   } catch (error) {
     return new Response(error as string, {status: 500})
