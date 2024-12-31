@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
+import { issueToken } from "@/scripts/util";
 
 
 export async function POST(req: Request) {
@@ -24,10 +25,6 @@ export async function POST(req: Request) {
     where: { name: 'USER' }
   })
 
-  // if (!role) {
-  //   return res.status(500).json({ error: 'Default role not found' })
-  // }
-
   try {
     const newUser = await prisma.user.create({
       data: {
@@ -37,7 +34,7 @@ export async function POST(req: Request) {
         roles: {
           connect: { id: role!.id }
         }
-      }
+      }, include: {roles: true}
     })
     const accountData = 
       provider === 'credentials' ? 
@@ -46,16 +43,7 @@ export async function POST(req: Request) {
     
     await createAccount(newUser.id, provider, 'someProviderId', accountData)
   
-    // return new Response(JSON.stringify({
-    //     id: newUser.id,
-    //     email: newUser.email,
-    //     name: newUser.name,
-    //     createdAt: newUser.createdAt,
-    // }), { status: 201 });
-    const token = jwt.sign({
-      id: newUser.id,
-      name: newUser.name
-    }, JWT_SECRET!, {expiresIn: '7d'})
+    const token = issueToken("7d", ['id', newUser.id], ['name', newUser.name], ['roles', newUser.roles])
     return new Response(JSON.stringify({ token }), {status: 200})
   } catch (error) {
     return new Response(error as string, {status: 500})

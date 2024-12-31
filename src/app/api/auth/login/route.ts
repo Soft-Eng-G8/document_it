@@ -5,6 +5,7 @@ import prisma from "@/lib/db";
 import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
+import { issueToken } from "@/scripts/util";
 
 
 if(!JWT_SECRET) throw new Error("No JWT_SECRET env var detected. Ask for one");
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { name: username }, // Assuming email is used as the username
+    include: { roles: true }
   });
 
   if (!user) {
@@ -37,19 +39,9 @@ export async function POST(req: Request) {
     });
   }
 
-  // Return user information, e.g., as a session token
-  const token = jwt.sign({
-    id: user.id,
-    name: user.name
-  }, JWT_SECRET!, {expiresIn: '7d'})
+  // Return user information as asession token
+  const token = issueToken("7d", ['id', user.id], ['name', user.name], ['roles', user.roles])
+  
   return new Response(JSON.stringify({ token }), {status: 200})
-  // return new Response(
-  //   JSON.stringify({
-  //     id: user.id,
-  //     name: user.name,
-  //     createdAt: user.createdAt
-  //   }),
-  //   { status: 200 }
-  // );
 }
 

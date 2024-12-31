@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { NextRequest } from "next/server";
-import { sign, verify } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 import { JWT_SECRET } from "@/app/api/config";
 
 export const sleep = async(ms: number) => new Promise<void>(resolve => setTimeout(() => {resolve()}, ms))
@@ -127,7 +127,7 @@ export const verifyToken = async(req: NextRequest) => {
   if(!token) return {error: "Token not provided"}
 
   try {
-    const decodedToken = verify(token, JWT_SECRET!)
+    const decodedToken = verify(token, JWT_SECRET!) as JwtPayload
     return { decodedToken }
   } catch(e) {
     return { error: "Invalid or expired token" }
