@@ -47,7 +47,8 @@ export const options: NextAuthOptions = {
   },
   session: {
     //? Shhh, it works
-    strategy: 'jwt'
+    strategy: 'jwt',
+    maxAge: 60 * 60 * 24 * 7,
   },
   adapter: PrismaAdapter(prisma),
   callbacks: {
