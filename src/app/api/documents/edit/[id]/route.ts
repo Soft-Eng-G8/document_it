@@ -14,7 +14,6 @@ export async function POST(req: NextRequest, { params } : {params: {id: string}}
 
   console.log(decodedToken)
   const { id: user_id } = decodedToken!
-  console.log(user_id)
   const { id } = await params
   const { newTitle, newDescription, newContent, newAdditional, newImageURL, newPdfURL, newRequirements } = await req.json()  
 
