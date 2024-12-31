@@ -113,16 +113,17 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
   }
 }
 
+interface IPerms {
+  id: string
+  name: string
+  authorityLevel: number
+}
 interface IRoles {
   id: string
   name: string
-  permissions: {
-    id: string
-    name: string
-    authorityLevel: number
-  }[]
+  permissions: IPerms[]
 }
-export const getPerms = (roles: IRoles[]) => {
+export const getPermsFromRole = (roles: IRoles[]) => {
   const perms = Object.values(
   roles
     .flatMap((role: IRoles) => role.permissions)
@@ -137,6 +138,15 @@ export const getPerms = (roles: IRoles[]) => {
   );
   return perms
 }
+
+
+export const formatPerms = (perms: IPerms[]) => {
+  return {
+    value: perms,
+    has: (...val: string[]) => perms.find(perm => val.every(valPerm => perm.name === valPerm))
+  }
+}
+
 
 type tokenProp = [key: string, val: any]
 export const issueToken = (expiresIn: string, ...args: tokenProp[]) => {

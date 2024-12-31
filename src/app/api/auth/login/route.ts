@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
-import { getPerms, issueToken } from "@/scripts/util";
+import { getPermsFromRole, issueToken } from "@/scripts/util";
 
 
 if(!JWT_SECRET) throw new Error("No JWT_SECRET env var detected. Ask for one");
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const perms = getPerms(user.roles)
+  const perms = getPermsFromRole(user.roles)
 
   // Compare the password
   const isValidPassword = await verify(user.hashedPassword, password);
