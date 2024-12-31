@@ -1,12 +1,23 @@
 import prisma from "@/lib/db";
+import { verifyToken } from "@/scripts/util";
 import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 
 
 export async function POST(req: NextRequest, { params } : {params: {id: string}}) {
+  const { decodedToken, error } = await verifyToken(req)
+  if(error) {
+    console.log(error)
+    return new Response(error, {status: 401})
+  }
+
+  console.log(decodedToken)
+  const { id: user_id } = decodedToken!
+  console.log(user_id)
   const { id } = await params
-  const { user_id, newTitle, newDescription, newContent, newAdditional, newImageURL, newPdfURL, newRequirements } = await req.json()  
+  const { newTitle, newDescription, newContent, newAdditional, newImageURL, newPdfURL, newRequirements } = await req.json()  
+
 
   if(!id) return new Response("Err: no document attached")
 
