@@ -67,6 +67,9 @@ export default {
 		  backgroundImage: {
 			'card-gradient': 'radial-gradient(circle, transparent var(--big-circle-r), var(--card-color) calc(var(--big-circle-r) + 1px))',
 		  },
+		  fontFamily:{
+			bofy: ['Nunito']
+		  }
   	}
   },
   plugins: [require("tailwindcss-animate")],
