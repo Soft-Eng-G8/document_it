@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
 
 
 const updateDocumentSchema = z.object({
-    docId: z.number(),
+    docId: z.string(),
     title: z.string(),
     description: z.string(),
     categoryId: z.number(),
@@ -208,7 +208,7 @@ export async function PUT(request: NextRequest) {
 }
 
 const deleteDocumentSchema = z.object({
-    docId: z.number(),
+    docId: z.string(),
 });
 
 type DeleteDocumentRequestBody = z.infer<typeof deleteDocumentSchema>;

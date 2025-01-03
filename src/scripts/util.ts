@@ -1,4 +1,7 @@
 import { Prisma } from "@prisma/client"
+import { NextRequest } from "next/server";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { JWT_SECRET } from "@/app/api/config";
 
 export const sleep = async(ms: number) => new Promise<void>(resolve => setTimeout(() => {resolve()}, ms))
 export const rngArr = (arr: Array<any>) => arr[Math.floor(Math.random() * arr.length)]
@@ -41,7 +44,7 @@ export const structureCategories = (data: ICategoryPure[]) => {
 }
 
 interface IDocumentPure {
-id: number;
+  id: string;
   title: string;
   description: string;
   imageUrl: string | null;
@@ -54,7 +57,7 @@ id: number;
 }
 
 export interface IDocument {
-  id: number;
+  id: string;
   title: string;
   description: string;
   imageUrl: string | null;
@@ -107,5 +110,60 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
     additional: old.additional,
     userId: old.userId,
     categoryId: old.categoryId
+  }
+}
+
+interface IPerms {
+  id: string
+  name: string
+  authorityLevel: number
+}
+interface IRoles {
+  id: string
+  name: string
+  permissions: IPerms[]
+}
+export const getPermsFromRole = (roles: IRoles[]) => {
+  const perms = Object.values(
+  roles
+    .flatMap((role: IRoles) => role.permissions)
+    .reduce((acc, permission) => {
+      const existing = acc[permission.name];
+      // Keep the one with the highest authority level
+      if (!existing || permission.authorityLevel > existing.authorityLevel) {
+        acc[permission.name] = permission;
+      }
+      return acc;
+    }, {} as Record<string, IRoles['permissions'][0]>)
+  );
+  return perms
+}
+
+
+export const formatPerms = (perms: IPerms[]) => {
+  return {
+    value: perms,
+    has: (...val: string[]) => perms.find(perm => val.every(valPerm => perm.name === valPerm))
+  }
+}
+
+
+type tokenProp = [key: string, val: any]
+export const issueToken = (expiresIn: string, ...args: tokenProp[]) => {
+  const tokenProps = Object.fromEntries(args)
+  const token = sign(tokenProps, JWT_SECRET!, {expiresIn}) 
+  return token
+}
+
+export const verifyToken = async(req: NextRequest) => {
+  const authHeader = req.headers.get('Authorization')
+  const token = authHeader?.split(" ")[1]
+  if(!token) return {error: "Token not provided"}
+
+  try {
+    const decodedToken = verify(token, JWT_SECRET!) as JwtPayload
+    return { decodedToken }
+  } catch(e) {
+    return { error: "Invalid or expired token" }
   }
 }
