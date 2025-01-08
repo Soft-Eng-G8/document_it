@@ -1,0 +1,102 @@
+import { Search } from "lucide-react"
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandLoading,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command"
+import { useEffect, useState } from "react"
+import { Button } from "../ui/multiple_uses/button"
+import { Document , Category} from "@prisma/client"
+
+type ExtendedDocument = Document & {
+  category: Category
+}
+
+const SearchInput = () => {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [search, setSearch] = useState('')
+  const [items, setItems] = useState<ExtendedDocument[]>([])
+
+  // Debouncing effect for searching
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      try {
+        if (!search) {
+          setItems([])
+          return
+        }
+        const res = await fetch(`/api/search/document?query=${search}`)
+        const data = await res.json()
+        console.log(data)
+        setItems(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  // Keyboard shortcut effect
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+
+  return (
+    <>
+      <Button className="my-2" onClick={() => setOpen(o => !o)}>
+        cool button yes
+      </Button>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput
+          placeholder="Type a command or search..."
+          value={search}
+          onValueChange={setSearch}
+        />
+        {loading &&
+        <CommandLoading>
+          Content is loading, hold on please
+        </CommandLoading>
+        }
+        <CommandList>
+          {
+            (items == null || items.length === 0 || loading) ? 
+            (<CommandEmpty>No results found.</CommandEmpty>):
+          <CommandGroup title={`Results for '${search}'`}>
+            {items?.map((item) => (
+              <CommandItem key={item.id}>
+                <div className="flex flex-col p-2 border-b border-gray-200">
+                  <span className="font-bold text-lg">{item.title}</span>
+                  <span className="text-gray-600">{item.description}</span>
+                  <span className="text-sm text-gray-500">
+                    {item.category.title}
+                  </span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          }
+        </CommandList>
+      </CommandDialog>
+    </>
+  )
+}
+
+export default SearchInput
