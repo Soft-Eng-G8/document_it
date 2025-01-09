@@ -5,6 +5,7 @@ import Header from "./header";
 import AdminPanel from "@/app/admin_panel/page";
 import DashboardItem from "./dashboard_item";
 import UsersDisplay from "@/app/otherUserDisplay/page";
+import ContributionsComponent from "@/app/contributions_panel/page";
 
 function DashboardView() {
   const [selectedMenu, setSelectedMenu] = useState("overview");
@@ -16,7 +17,7 @@ function DashboardView() {
       case "users":
         return <UsersDisplay />;
       case "contributions":
-        return <div>Contributions Component</div>; 
+        return <ContributionsComponent/>; 
       case "adminPanel":
         return <AdminPanel />;
       case "settings":

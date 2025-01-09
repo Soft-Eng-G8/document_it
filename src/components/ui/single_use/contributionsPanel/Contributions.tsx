@@ -45,7 +45,7 @@ function ContributionsPanel() {
         },
     ]
   return (
-    <div className='w-full h-[450px] bg-mywhite rounded-lg shadow-lg flex flex-col justify-between'>
+    <div className='w-full h-[550px] bg-mywhite rounded-lg shadow-lg flex flex-col justify-between'>
         <div className='flex-1 flex flex-row justify-between items-center p-4 ml-6'>
             <div className='flex-[1] flex flex-col'>
             <div className='text-[30px] font-bold text-black mb-2'>Latest Contributions</div>

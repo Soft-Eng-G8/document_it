@@ -37,7 +37,6 @@ function SideNavBar({ onMenuSelect }: SideNavBarProps) {
   return (
     <div className="absoulte flex flex-col w-[300px] min-w-[300px] border-r h-screen p-4 gap-2 bg-mywhite overflow-y-auto">
       <div>
-        {/* User Item placeholder */}
       </div>
       <div className="flex justify-start flex-col h-screen">
         <UserItem/>
@@ -47,9 +46,9 @@ function SideNavBar({ onMenuSelect }: SideNavBarProps) {
               {menu.group}
             </h3>
             <ul className="mt-2 space-y-2">
-              {menu.items.map((item) => (
+              {menu.items.map((item) => ( 
                 <li key={item.id}>
-                  <button
+                  <button 
                     onClick={() => onMenuSelect(item.id)}
                     className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-200 text-gray-700 w-full text-left"
                   >

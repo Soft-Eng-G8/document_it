@@ -2,12 +2,13 @@ import ContributionsPanel from '@/components/ui/single_use/contributionsPanel/Co
 import RecentContributions from '@/components/ui/single_use/contributionsPanel/recents'
 import React from 'react'
 
-function AdminPanel() {
+function ContributionsComponent() {
   return (
-   <div>
-    Admin Panel
-   </div>
+    <div className='flex flex-col'>
+      <ContributionsPanel/>
+      <RecentContributions/>
+    </div>
   )
 }
 
-export default AdminPanel
+export default ContributionsComponent
