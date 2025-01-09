@@ -6,6 +6,7 @@ import { Info } from 'lucide-react'
 import InfoPannel from '@/components/ui/single_use/doc_display/info_display'
 import AttachedFiles from '@/components/ui/single_use/doc_display/attached_files'
 import { Navbar } from '@/components/ui/multiple_uses/navbar'
+import DisplayEdit from '@/components/ui/single_use/doc_display/display_edit'
 
 function DocDisplay() {
   const reqs = ["Copie du titre proprietaire en vigueur",
@@ -56,7 +57,9 @@ function DocDisplay() {
       <div className='mb-5'>
         <AttachedFiles/>
       </div>
-      
+      <div>
+        <DisplayEdit/>
+      </div>
     </div>
     
   </div>

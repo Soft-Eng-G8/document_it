@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/multiple_uses/dropdown-menu"
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_uses/alert"
-import { Navbar } from "@/components/ui/multiple_uses/navbar"
 import prisma from "@/lib/db"
 import { ICategory } from "@/scripts/util"
 import { redirect } from "next/navigation"

@@ -14,6 +14,7 @@ export default {
   			foreground: 'hsl(var(--foreground))',
 			mywhite: 'hsl(var(--myWhite))',
 			mygrey: 'hsl(var(--myGrey))',
+			myLightBlue: 'hsl(var(--myLightBlue))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -53,12 +54,22 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
+			
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		  boxShadow: {
+			'inner-custom': 'inset 0px 4px 10px rgba(0, 0, 0, 0.2)',
+		  },
+		  backgroundImage: {
+			'card-gradient': 'radial-gradient(circle, transparent var(--big-circle-r), var(--card-color) calc(var(--big-circle-r) + 1px))',
+		  },
+		  fontFamily:{
+			bofy: ['Nunito']
+		  }
   	}
   },
   plugins: [require("tailwindcss-animate")],
