@@ -1,5 +1,6 @@
+'use client'
 "use client";
-import React, { useState } from 'react';
+import React, { useRef }, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -47,8 +48,31 @@ export function ProfileForm() {
   );
 }
 
+interface FormData {
+  username: string
+  password: string
+}
 
-function Login() {
+import { signIn } from 'next-auth/react';
+interface ILogin {
+  callbackUrl: string
+}
+
+function Login(props: ILogin) {
+  const username = useRef('')
+  const password = useRef('')
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+  const onSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const result = await signIn('credentials', {
+      username: username.current,
+      password: password.current,
+      callbackUrl: props.callbackUrl 
+    });
+
+  };
+
+
 
   const [isLogin, setIsLogin] = useState(true);
   const [forgotPass, setForgotPass] = useState(false);
@@ -78,17 +102,38 @@ function Login() {
           </div>
         </ResizablePanel>
         <ResizableHandle />
-    <ResizablePanel defaultSize={50} className="bg-mywhite">
-        {forgotPass? <h1>hi</h1>: isLogin ? <LoginPanel /> : <SignUpPanel />}
-        <div className='flex flex-row justify-center items-center p-4'>
-        <h1 className='text-black '>
-          {forgotPass? "": isLogin? "Not a member?": "Already have an account?"}
-        </h1>
-        <button onClick={forgotPass? toggleForgotPass : togglePanel} className='bg-transparent text-foreground pl-4 font-bold'>
-          
-         {forgotPass? "Back to Login": isLogin ? "Sign Up" : "Login"}
-        </button>
-        </div>
+        <ResizablePanel defaultSize={50} className="bg-mywhite">
+          <div className="flex flex-col h-[600px] p-6 text-secondary-foreground">
+            <div className="flex flex-col items-center space-y-2">
+              <span className="font-bold text-2xl text-primary">Docs</span>
+              
+            </div>
+            <form className="flex flex-col items-center justify-center flex-1 space-y-4"  onSubmit={onSubmit}>
+            <span className="font-medium text-lg">Welcome To Docs</span>
+              <div className="w-full max-w-xs">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                  User Name or Email
+                </label>
+                <Input id="username" type="text" onChange={e => username.current = e.target.value}/>
+              </div>
+              <div className="w-full max-w-xs">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <Input id="password" type="password" onChange={e => password.current = e.target.value}
+                />
+              </div>
+              <a
+                href="#"
+                className="text-sm text-background font-semibold hover:underline"
+              >
+                Forgot Password?
+              </a>
+              <Button className="text-mywhite font-semibold rounded-md w-full max-w-xs" type='submit'>
+                Login
+              </Button>
+            </form>
+          </div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

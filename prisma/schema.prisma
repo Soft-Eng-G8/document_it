@@ -11,56 +11,176 @@ datasource db {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
-  name String
-  User User[]
+  id                String          @id @default(cuid())
+  name              String
+  users             User[]
+  permissions       Permission[]
 }
 
 model User {
-  id             String     @id @default(cuid())
-  email          String     @unique
-  hashedPassword String
-  role           Role       @relation(fields: [roleId], references: [id])
-  roleId         Int
-  documents      Document[]
+  id                String          @id @default(cuid())
+  name              String          @unique
+  username          String          @unique
+  email             String?         @unique
+  hashedPassword    String
+  createdAt         DateTime        @default(now())
+
+  accountId         String?
+  account           Account?
+  roles             Role[]       
+
+  documents         Document[]
+
+  contributions     Contribution[] @relation("ContributionUser")
+
+  reviews           Contribution[] @relation("ContributionReviewer")
+
+}
+
+model Account {
+  id                String          @id @default(cuid())
+  provider          String
+  providerAccountID String
+
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Credential-based
+  username          String?
+  hashedPassword    String?
+
+  // OAuth-based
+  accessToken       String?
+  refreshToken      String?
 }
 
 model Category {
-  id             Int        @id @default(autoincrement())
-  title          String
-  description    String
-  imageUrl       String?
-  categories     Category[] @relation("CategoryToCategory")
-  Documents      Document[]
-  categoryParent Category?  @relation("CategoryToCategory", fields: [categoryId], references: [id])
-  categoryId     Int?
+  id                Int             @id @default(autoincrement())
+  title             String
+  description       String
+  imageUrl          String?
+  categories        Category[]      @relation("CategoryToCategory")
+  Documents         Document[]
+  categoryParent    Category?       @relation("CategoryToCategory", fields: [categoryId], references: [id])
+  categoryId        Int?
 }
 
 model Document {
-  id          Int   @id @default(autoincrement())
-  title       String
-  description String
-  content     String?
-  additional  String?
-  imageUrl    String?
-  pdfUrl      String?
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
-  Category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  addedBy     User     @relation(fields: [userId], references: [id])
-  userId      String
-  Requirement Requirement[]
+  id                String          @id @default(cuid())
+  title             String
+  description       String
+  content           String?
+  additional        String?
+  imageUrl          String?
+  pdfUrl            String?
+  status            String          @default("Unverified") // Verified
+  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime        @default(now())
+  category          Category        @relation(fields: [categoryId], references: [id])
+  requirements      Requirement[]
+  categoryId        Int
+  userId            String
+  addedBy           User            @relation(fields: [userId], references: [id])
+
+  contributions     Contribution[]
 }
 
 model Requirement{
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  status      String
-  type        String
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
-  Document    Document @relation(fields: [documentId], references: [id])
-  documentId  Int
+  id                Int             @id @default(autoincrement())
+  title             String
+  description       String
+  status            String
+  type              String
+  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime        @default(now())
+  
+  Document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId        String
 }
+
+
+model Contribution {
+  id                String          @id @default(cuid())
+  userId            String
+  user              User            @relation("ContributionUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewerId        String?
+  reviewer          User?            @relation("ContributionReviewer", fields: [reviewerId], references: [id])
+
+  documentId        String
+  document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  status            String          @default("PENDING") // Accepted, Rejected
+  type              String          @default("NEW") // EDIT
+  createdAt         DateTime        @default(now())
+  verifiedAt        DateTime?       
+
+  oldTitle          String?
+  newTitle          String
+  oldDescription    String?
+  newDescription    String
+  oldContent        String?
+  newContent        String?
+  oldAdditional     String?
+  newAdditional     String?
+  oldImageURL       String?
+  newImageURL       String?
+  oldPdfURL         String?
+  newPdfURL         String?
+}
+
+model Permission {
+  id                String          @id @default(cuid())
+  name              String
+  authorityLevel    Int             @default(0)
+
+  Role Role[]
+}
+
+// model TitleChange {
+//   id                String          @id @default(cuid())
+//   oldTitle          String
+//   newTitle          String
+
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
+
+// model DescriptionChange {
+//   id                String          @id @default(cuid())
+//   oldDescription    String
+//   newDescription    String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
+
+// model ContentChange {
+//   id                String          @id @default(cuid())
+//   oldContent        String
+//   newContent        String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
+
+// model AdditionalChange {
+//   id                String          @id @default(cuid())
+//   oldAdditional     String
+//   newAdditional     String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
+
+// model ImageURLChange {
+//   id                String          @id @default(cuid())
+//   oldImageURL       String
+//   newImageURL       String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
+
+// model PdfURLChange {
+//   id                String          @id @default(cuid())
+//   oldPdfURL         String
+//   newPdfURL         String
+//   contributionID    String          @unique
+//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
+// }
