@@ -55,6 +55,10 @@ interface IDocumentPure {
   updatedAt: Date;
   createdAt: Date;
   userId: string;
+    requirements: {
+    title: string
+    description: string
+  }[]
 }
 
 export interface IDocument {
@@ -69,6 +73,10 @@ export interface IDocument {
   // updatedAt: Date;
   // createdAt: Date;
   userId: string;
+  requirements: {
+    title: string
+    description: string
+  }[]
 }
 
 export const structureDocuments = (documents: IDocumentPure[], categories: ICategory[]) => {
@@ -112,7 +120,8 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
     content: old.content,
     additional: old.additional,
     userId: old.userId,
-    categoryId: old.categoryId
+    categoryId: old.categoryId,
+    requirements: old.requirements
   }
 }
 
