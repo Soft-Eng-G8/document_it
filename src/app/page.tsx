@@ -1,7 +1,6 @@
 
 "use client"
 
-import SearchInput from "@/components/molecules/SearchInput";
 import SectionAbout from "@/components/organisms/home/about";
 import HomeFooter from "@/components/organisms/home/footer";
 import { rngArr, sleep } from "@/scripts/util";
@@ -47,14 +46,13 @@ export default () => {
     <>
     <header className="h-[calc(100vh-4rem)] bg-yellow-500 w-full home-bg">
       <div className="w-full h-full flex flex-col justify-center items-center">
-        <div className="text-[8rem] text-blue-500 font-thin">DOCUMENT.IT</div>
+        <div className="text-[8rem] text-red-500 font-thin">DOCUMENT.IT</div>
         <div id="punchline" className="text-4xl text-white">
           <span ref={landingText}>Where </span>
         </div>
-        <SearchInput/>
       </div>
     </header>
-{/*     <SectionAbout inverted={false}
+    <SectionAbout inverted={false}
       headline={"Find all documents you need"}
       description={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem exercitationem maxime deserunt tempore? Unde ab aspernatur ut itaque odio animi placeat pariatur, veritatis iusto saepe rerum blanditiis consectetur ipsum aperiam!"}
       image={"https://picsum.photos/300"}
@@ -63,7 +61,7 @@ export default () => {
       headline={"Contribute your country's Documents!"}
       description={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem exercitationem maxime deserunt tempore? Unde ab aspernatur ut itaque odio animi placeat pariatur, veritatis iusto saepe rerum blanditiis consectetur ipsum aperiam!"}
       image={"https://picsum.photos/300"}
-    /> */}
+    />
     <HomeFooter />
 
     </>
