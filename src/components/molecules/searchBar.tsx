@@ -1,64 +1,14 @@
-"use client"
-import { Search, X } from 'lucide-react'
-import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import { Search } from "lucide-react"
 
 
-
-const searchBar = () => {
-    const searchParams = useSearchParams()
-    const pathname = usePathname()
-    const { replace } = useRouter()
-    function handleSearch(term: string) {
-        const params = new URLSearchParams(searchParams)
-        if (term) {
-            params.set('query', term)
-            params.set('page', '1')
-        }
-        else {
-            params.delete('query')
-            params.delete('page')
-        }
-        replace(`${pathname}?${params.toString()}`)
-    }
+const SearchBar = () => (
+  <div className="p-2 bg-slate-300 w-1/5">
+    <div className="inline-block">
+      <Search className="inline-block mr-2"/>
+      <input type="text" className="outline-none text-lg bg-transparent text-gray-500" />
+    </div>
+  </div>
+)
 
 
-    const reset = () => {
-        const form = document.querySelector('#search-form') as HTMLFormElement;
-        if (form) {
-            form.reset();
-            handleSearch('')
-        }
-    }
-
-    return (
-        <form onSubmit={
-            (e) => {
-                e.preventDefault()
-                handleSearch((e.target as HTMLFormElement).query.value)
-            }
-        } className='flex flex-col items-center' id='search-form'>
-            <div className='search-form'
-            >
-            <input
-                className='search-input'
-                name="query"
-                placeholder="Search for Documents"
-                /* onChange={(e) => handleSearch(e.target.value)} */
-                defaultValue={searchParams.get('query') || ''}
-            />
-            <div className='flex gap-2'>
-                {(searchParams.get('query')
-                ) &&
-                    <button type="reset" onClick={reset} className="search-btn text-white">
-                        <X className='size-5' />
-                    </button>}
-                <button type="submit" className="search-btn text-white">
-                    <Search className='size-5' />
-                </button>
-            </div>
-            </div>
-        </form>
-    )
-}
-
-export default searchBar
+export default SearchBar
