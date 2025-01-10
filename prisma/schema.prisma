@@ -56,14 +56,17 @@ model Account {
 }
 
 model Category {
-  id                Int             @id @default(autoincrement())
+  id                String          @id @default(cuid())
   title             String
   description       String
   imageUrl          String?
   categories        Category[]      @relation("CategoryToCategory")
   Documents         Document[]
   categoryParent    Category?       @relation("CategoryToCategory", fields: [categoryId], references: [id])
-  categoryId        Int?
+  categoryId        String?
+
+  oldContributions  Contribution[] @relation(name: "oldCategoryToContribution")
+  newContributions  Contribution[] @relation(name: "newCategoryToContribution")
 }
 
 model Document {
@@ -74,29 +77,32 @@ model Document {
   additional        String?
   imageUrl          String?
   pdfUrl            String?
-  status            String          @default("Unverified") // Verified
   updatedAt         DateTime        @updatedAt
   createdAt         DateTime        @default(now())
+  categoryId        String
   category          Category        @relation(fields: [categoryId], references: [id])
   requirements      Requirement[]
-  categoryId        Int
   userId            String
   addedBy           User            @relation(fields: [userId], references: [id])
 
   contributions     Contribution[]
 }
 
-model Requirement{
-  id                Int             @id @default(autoincrement())
+model Requirement {
+  id                String          @id @default(cuid())
   title             String
   description       String
-  status            String
-  type              String
   updatedAt         DateTime        @updatedAt
   createdAt         DateTime        @default(now())
   
-  Document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  documentId        String
+  documentId        String?
+  document          Document?       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  oldContributionId String?
+  oldContribution   Contribution?   @relation(name: "ContributionToOldRequirement", fields: [oldContributionId], references: [id], onDelete: Cascade)
+
+  newContributionId String?
+  newContribution   Contribution?   @relation(name: "ContributionToNewRequirement", fields: [newContributionId], references: [id], onDelete: Cascade)
 }
 
 
@@ -105,10 +111,10 @@ model Contribution {
   userId            String
   user              User            @relation("ContributionUser", fields: [userId], references: [id], onDelete: Cascade)
   reviewerId        String?
-  reviewer          User?            @relation("ContributionReviewer", fields: [reviewerId], references: [id])
+  reviewer          User?           @relation("ContributionReviewer", fields: [reviewerId], references: [id])
 
-  documentId        String
-  document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId        String?
+  document          Document?       @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   status            String          @default("PENDING") // Accepted, Rejected
   type              String          @default("NEW") // EDIT
@@ -127,6 +133,13 @@ model Contribution {
   newImageURL       String?
   oldPdfURL         String?
   newPdfURL         String?
+  oldCategoryId     String?
+  oldCategory       Category?       @relation(name: "oldCategoryToContribution", fields: [oldCategoryId], references: [id])
+  newCategoryid     String?
+  newCategory       Category?       @relation(name: "newCategoryToContribution", fields: [newCategoryid], references: [id])
+
+  oldRequirements   Requirement[]   @relation(name: "ContributionToOldRequirement")
+  newRequirements   Requirement[]   @relation(name: "ContributionToNewRequirement")
 }
 
 model Permission {

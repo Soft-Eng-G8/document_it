@@ -6,6 +6,7 @@ import { hash, verify } from "argon2";
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from "@/app/api/config";
 import { getPermsFromRole, issueToken } from "@/scripts/util";
+import manager from "@/app/manager";
 
 
 if(!JWT_SECRET) throw new Error("No JWT_SECRET env var detected. Ask for one");
@@ -20,33 +21,32 @@ export async function POST(req: Request) {
     });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { name: username }, // Assuming email is used as the username
-    include: { roles: {
-      include: {permissions: true}
-    }}
-  });
+  try {
+    const { user, perms } = await manager.fetchUser({
+      name: username,
+      perms: true
+    })
 
-  
-  if (!user) {
-    return new Response(JSON.stringify({ error: "User not found" }), {
-      status: 404,
-    });
+    if (!user) {
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+      });
+    }
+
+    // Compare the password
+    const isValidPassword = await verify(user.hashedPassword, password);
+    if (!isValidPassword) {
+      return new Response(JSON.stringify({ error: "Invalid password" }), {
+        status: 401,
+      });
+    }
+
+    // Return user information as asession token
+    const token = issueToken("7d", ['id', user.id], ['name', user.name], ['perms', perms])
+    
+    return new Response(JSON.stringify({ token }), {status: 200})
+  } catch (error) {
+    
   }
-
-  const perms = getPermsFromRole(user.roles)
-
-  // Compare the password
-  const isValidPassword = await verify(user.hashedPassword, password);
-  if (!isValidPassword) {
-    return new Response(JSON.stringify({ error: "Invalid password" }), {
-      status: 401,
-    });
-  }
-
-  // Return user information as asession token
-  const token = issueToken("7d", ['id', user.id], ['name', user.name], ['perms', perms])
-  
-  return new Response(JSON.stringify({ token }), {status: 200})
 }
 

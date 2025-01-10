@@ -48,6 +48,7 @@ interface IDocumentPure {
   title: string;
   description: string;
   imageUrl: string | null;
+  pdfUrl: string | null;
   categoryId: number;
   content: string | null;
   additional: string | null;
@@ -64,6 +65,7 @@ export interface IDocument {
   categoryId: number;
   content: string | null;
   additional: string | null;
+  pdfUrl: string | null;
   // updatedAt: Date;
   // createdAt: Date;
   userId: string;
@@ -106,6 +108,7 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
     title: old.title,
     description: old.description,
     imageUrl: old.imageUrl,
+    pdfUrl: old.pdfUrl,
     content: old.content,
     additional: old.additional,
     userId: old.userId,
