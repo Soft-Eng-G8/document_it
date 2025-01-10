@@ -22,7 +22,7 @@ function CategoryCard({category, symbol}: MyCategory) {
         <MoveRight className='text-black' />
       </div>
 
-      <div>
+      <div className='flex flex-col justify-center items-start h-full'>
       <Landmark className='text-black' size={50} />
       <div className='h-[20px]'></div>
       <div className={`text-[12px] font text-black ${lightRoboto.className}`}>Explore the documents obtained in the {category}</div>

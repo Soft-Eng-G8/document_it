@@ -1,5 +1,6 @@
 
 import Header from '@/components/ui/single_use/dashboard/header'
+import prisma from '@/lib/db'
 import { Monitor, FileText, FileCode, Search, Landmark, TicketsPlane } from 'lucide-react'
 import Link from "next/link"
 
@@ -58,7 +59,14 @@ const categories: Category[] = [
   }
 ]
 
-export default function Page() {
+export default async function Page({params}: { params: { id: number } }) {
+
+    const category = await prisma.category.findFirst({
+        where: {
+          id: parseInt(params.id.toString(), 10)
+        }
+      });
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -87,7 +95,7 @@ export default function Page() {
           <TicketsPlane size={80} />
           </div>
           <div className='h-10'></div>
-          <h1 className='text-black text-2xl font-bold'>Visa</h1>
+          <h1 className='text-black text-2xl font-bold'>{category?.title}</h1>
 
         </div>
       </main>

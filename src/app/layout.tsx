@@ -11,7 +11,6 @@ export default ({children}: {children: React.ReactNode}) => (
   <html>
     <body>
       <SessionProvider>
-        <Navbar></Navbar>
         {children}
       </SessionProvider>
     </body>
