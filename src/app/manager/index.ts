@@ -1,43 +1,72 @@
 import { createAccount } from "@/lib/accountUtils";
 import prisma from "@/lib/db";
-import { getPermsFromRole, issueToken } from "@/scripts/util";
+import { getPermsFromRole, IDocument, issueToken } from "@/scripts/util";
 import { Prisma, User } from "@prisma/client";
 import { hash } from "argon2";
+import { pinata } from "../utils/config";
 
 interface IUserOptions {
   id?: string
   name?: string
   perms?: boolean
-  roles?: boolean
-  documents?: boolean
-  badges?: boolean
 }
 
+interface IDocumentData {
+  title: string
+  description: string
+  content: string
+  additional: string
+  categoryId?: string
+  userId: string
+  logo: File
+  pdf: File
+  requirements: {
+    title: string
+    description: string
+  }[]
+}
 
+interface IDocumentOptions {
+  id?: string,
+  userId: string
+  status?: string
+  bypass?: string
+}
 
 
 
 class DBManager {
   constructor() {}
 
+  //? Users
   public async fetchUser(options: IUserOptions) {
-    const { id, name, perms, roles, documents, badges } = options
+    const { id, name} = options
     const whereClauses = {
       ...(id && {id}),
       ...(name && {name})
     }
-    const includeClauses = {
-      ...(roles && { roles: perms? {
-          permissions: true
-      } : true }),
-      ...(documents && { document: true})
-    }
     try {
-      const user = prisma.user.findUnique({
-        where: whereClauses as Prisma.UserWhereUniqueInput, include: includeClauses as Prisma.UserInclude
+      const user = await prisma.user.findUnique({
+        where: whereClauses as Prisma.UserWhereUniqueInput, 
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          hashedPassword: true,
+          roles: {
+            include: {
+              permissions: true
+            }
+          }
+        }
       })
-      const perms = getPermsFromRole(user.roles)
-      return [user, )]
+      
+      if(!user) throw new Error("No user found")
+
+      return {
+        user,
+        perms: getPermsFromRole(user.roles) 
+      }
     } catch(err) {
       throw new Error(err as string)
     }
@@ -86,6 +115,167 @@ class DBManager {
       return token
     } catch(error) {
       return new Error(error as string)
+    }
+  }
+
+  //? Documents
+  public async fetchDocument(options: IDocumentOptions) {
+    const { id, userId, status } = options
+    const whereClauses = {
+      ...(id && {id}),
+      ...(userId && {userId})
+    }
+    try {
+      const document = prisma.document.findUnique({
+        where: whereClauses as Prisma.DocumentWhereUniqueInput,
+
+      })
+      if(!document) throw new Error("No user found")
+
+      return document
+    } catch(error) {
+      throw new Error(error as string)
+    }
+  }
+
+  public async addDocumentPending(doc: IDocumentData, options: IDocumentOptions) {
+    try {
+      const contribution_empty = await prisma.contribution.create({
+        data: {
+          newTitle: doc.title,
+          newDescription: doc.description,
+          newContent: doc.content,
+          newAdditional: doc.additional,
+          newCategory: {
+            connect: { id: doc.categoryId }
+          },
+          user: {
+            connect: { id: options.userId }
+          },
+          status: "PENDING"
+        }
+      })
+
+      let logoUrl: string | null = null
+      if(doc.logo) {
+        const logoUploadData = await pinata.upload.file(doc.logo)
+        logoUrl = await pinata.gateways.createSignedURL({
+          cid: logoUploadData.cid,
+          expires: 3600 * 24 * 365
+        })
+      }
+      let pdfUrl: string | null = null
+      if(doc.pdf) {
+        const fileUploadData = await pinata.upload.file(doc.pdf)
+        pdfUrl = await pinata.gateways.createSignedURL({
+          cid: fileUploadData.cid,
+          expires: 3600 * 24 * 365
+        })
+      }
+
+      const contribution = await prisma.contribution.update({
+        where: { id: contribution_empty.id },
+        data: {
+          newImageURL: logoUrl,
+          newPdfURL: pdfUrl,
+          newRequirements: {
+            create: doc.requirements.map(req => ({
+              ...req,
+              newContribution: {
+                connect: { id: contribution_empty.id }
+              }
+            }))
+          }
+        }
+      })
+
+      if(options.bypass) {
+        return this.verifyContribution(contribution.id, "APPROVED")
+      }
+      return contribution
+    } catch (error) {
+      
+    }
+
+
+  }
+
+
+  //? Contributions
+  public async createContribution(doc: IDocumentData) {
+    // const document = prisma.document.create({
+    //   data: {
+    //     title: doc.title,
+    //     description: doc.description,
+    //     content: doc.content,
+    //     additional: 
+    //   }
+    // })    
+    // const req = prisma.requirement.createMany({
+    //   data: document.requirements
+    // })
+  }
+  public async verifyContribution(contributionId: string, status: "APPROVED" | "REJECTED") {
+    try {
+      const contribution = await prisma.contribution.update({
+        where: { id: contributionId },
+        data: { status },
+        include: { newRequirements: true, oldRequirements: true, newCategory: true, oldCategory: true }
+      })
+      const applyChanges = status === "APPROVED"
+      let updated_contribution = null;
+      if(applyChanges) {
+        switch (contribution.type) {
+          case "NEW":
+          updated_contribution = await prisma.contribution.update({
+          where: { id: contributionId },
+            data: {
+              document: { create: {
+                title: contribution!.newTitle,
+                description: contribution!.newDescription,
+                content: contribution!.newContent,
+                additional: contribution!.newAdditional,
+                requirements: {
+                  connect: contribution!.newRequirements.map(req => ({id: req.id}))
+                },
+                addedBy: {
+                  connect: { id: contribution!.userId }
+                },
+                category: {
+                  connect: { id: contribution!.newCategoryid! }
+                }
+              }
+            }}
+          })
+          break
+        
+          case "EDIT":
+          updated_contribution = await prisma.contribution.update({
+            where: { id: contributionId },
+            data: {
+              document: { update: {
+                title: contribution!.newTitle,
+                description: contribution!.newDescription,
+                content: contribution!.newContent,
+                additional: contribution!.newAdditional,
+                requirements: {
+                  connect: contribution!.newRequirements.map(req => ({id: req.id}))
+                },
+                addedBy: {
+                  connect: { id: contribution!.userId }
+                },
+                category: {
+                  connect: { id: contribution!.newCategoryid! }
+                }  
+              }}
+            }
+          })
+          break
+        }
+      }
+      return updated_contribution
+    } catch (error) {
+      
     }
   }
 }

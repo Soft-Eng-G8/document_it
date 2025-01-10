@@ -7,13 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, { params } : {params: {id: string}}) {
   const { decodedToken, error } = await verifyToken(req)
-  if(error) {
+  if(error || !decodedToken) {
     console.log(error)
     return new Response(error, {status: 401})
   }
 
-  console.log(decodedToken)
-  const { id: user_id } = decodedToken!
+  const { id: user_id } = decodedToken
   const { id } = await params
   const { newTitle, newDescription, newContent, newAdditional, newImageURL, newPdfURL, newRequirements } = await req.json()  
 
