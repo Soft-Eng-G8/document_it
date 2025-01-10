@@ -1,7 +1,7 @@
 'use client'
 import Link from "next/link";
 import Image from "next/image";
-import SearchBar from "../molecules/searchBar";
+import SearchInput from "../molecules/SearchInput";
 import { CircleUser, FileText, LogIn, LogOut, Pencil, UserPlus } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -19,7 +19,6 @@ const Navbar = () => {
           <Link href={"/"} className="flex justify-center items-center">
             <Image src='/logo.png' width={96} height={40} alt="logo" className="mr-5"/>
           </Link>
-        <SearchBar />
         </div>
         <div className="flex gap-1 items-center w-1/6 justify-evenly">
           <Link href="/categories">
