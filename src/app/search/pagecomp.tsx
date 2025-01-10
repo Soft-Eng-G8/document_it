@@ -2,11 +2,8 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/multiple_uses/pagination"
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 

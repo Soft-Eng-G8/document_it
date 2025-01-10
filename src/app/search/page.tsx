@@ -1,4 +1,4 @@
-import SearchBar from "@/components/molecules/SearchBar"
+import SearchBar from "@/components/molecules/searchBar"
 import DocumentList from "./DocumentList"
 import { fetchDocumentsPages } from "./loaders";
 import Pagecomp from "./pagecomp";
