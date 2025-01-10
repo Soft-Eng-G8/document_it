@@ -11,15 +11,15 @@ interface IUserOptions {
   perms?: boolean
 }
 
-interface IDocumentData {
+export interface IDocumentData {
   title: string
   description: string
   content: string
   additional: string
   categoryId?: string
   userId: string
-  logo: File
-  pdf: File
+  logo: File | null
+  pdf: File | null
   requirements: {
     title: string
     description: string
