@@ -33,7 +33,7 @@ export default function Header() {
           </Link>
           
           <Link 
-            href="/create" 
+            href="/doc_create" 
             className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             <PlusSquare className="h-4 w-4" />
