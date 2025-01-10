@@ -7,26 +7,26 @@ export const sleep = async(ms: number) => new Promise<void>(resolve => setTimeou
 export const rngArr = (arr: Array<any>) => arr[Math.floor(Math.random() * arr.length)]
 
 interface ICategoryPure {
-    title: string;
-    id: number;
-    description: string;
-    imageUrl: string | null;
-    categoryId: number | null;
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  categoryId: string | null;
 }
 
 export interface ICategory {
-    title: string;
-    id: number;
-    description: string;
-    imageUrl: string | null;
-    categories: ICategory[]
-    documents: IDocument[]
+  title: string;
+  id: string;
+  description: string;
+  imageUrl: string | null;
+  categories: ICategory[]
+  documents: IDocument[]
 }
 
 export type widgetTypes = "category" | "document" | "all"
 
 export const structureCategories = (data: ICategoryPure[]) => {
-  const idMap = new Map<number, ICategory>();
+  const idMap = new Map<string, ICategory>();
   const topLevelCategories: ICategory[] = []
 
   for(const cat of data) idMap.set(cat.id, migrateCategory(cat))
@@ -49,7 +49,7 @@ interface IDocumentPure {
   description: string;
   imageUrl: string | null;
   pdfUrl: string | null;
-  categoryId: number;
+  categoryId: string;
   content: string | null;
   additional: string | null;
   updatedAt: Date;
@@ -62,7 +62,7 @@ export interface IDocument {
   title: string;
   description: string;
   imageUrl: string | null;
-  categoryId: number;
+  categoryId: string;
   content: string | null;
   additional: string | null;
   pdfUrl: string | null;
