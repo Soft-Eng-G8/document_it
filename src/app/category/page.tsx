@@ -55,7 +55,7 @@ export default function Page() {
             key={index} 
             className="bg-background p-6 flex items-start gap-6 hover:shadow-lg transition-shadow rounded-lg hover:cursor-pointer"
           >
-            <div className="text-foreground">
+            <div className="text-black">
               {category.icon}
             </div>
             <div className="flex-1 space-y-4">
@@ -63,12 +63,7 @@ export default function Page() {
                 <h2 className="text-2xl font-semibold text-gray-800">{category.title}</h2>
                 <p className="text-gray-600 mt-1">{category.description}</p>
               </div>
-              <Link 
-                href={category.buttonLink}
-                className="inline-block bg-black text-white px-6 py-2 text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                {category.buttonText} →
-              </Link>
+              
             </div>
           </div>
         ))}
