@@ -7,26 +7,26 @@ export const sleep = async(ms: number) => new Promise<void>(resolve => setTimeou
 export const rngArr = (arr: Array<any>) => arr[Math.floor(Math.random() * arr.length)]
 
 interface ICategoryPure {
-    title: string;
-    id: number;
-    description: string;
-    imageUrl: string | null;
-    categoryId: number | null;
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  categoryId: string | null;
 }
 
 export interface ICategory {
-    title: string;
-    id: number;
-    description: string;
-    imageUrl: string | null;
-    categories: ICategory[]
-    documents: IDocument[]
+  title: string;
+  id: string;
+  description: string;
+  imageUrl: string | null;
+  categories: ICategory[]
+  documents: IDocument[]
 }
 
 export type widgetTypes = "category" | "document" | "all"
 
 export const structureCategories = (data: ICategoryPure[]) => {
-  const idMap = new Map<number, ICategory>();
+  const idMap = new Map<string, ICategory>();
   const topLevelCategories: ICategory[] = []
 
   for(const cat of data) idMap.set(cat.id, migrateCategory(cat))
@@ -48,12 +48,17 @@ interface IDocumentPure {
   title: string;
   description: string;
   imageUrl: string | null;
-  categoryId: number;
+  pdfUrl: string | null;
+  categoryId: string;
   content: string | null;
   additional: string | null;
   updatedAt: Date;
   createdAt: Date;
   userId: string;
+    requirements: {
+    title: string
+    description: string
+  }[]
 }
 
 export interface IDocument {
@@ -61,12 +66,17 @@ export interface IDocument {
   title: string;
   description: string;
   imageUrl: string | null;
-  categoryId: number;
+  categoryId: string;
   content: string | null;
   additional: string | null;
+  pdfUrl: string | null;
   // updatedAt: Date;
   // createdAt: Date;
   userId: string;
+  requirements: {
+    title: string
+    description: string
+  }[]
 }
 
 export const structureDocuments = (documents: IDocumentPure[], categories: ICategory[]) => {
@@ -106,10 +116,12 @@ export const migrateDocument = (old: IDocumentPure): IDocument => {
     title: old.title,
     description: old.description,
     imageUrl: old.imageUrl,
+    pdfUrl: old.pdfUrl,
     content: old.content,
     additional: old.additional,
     userId: old.userId,
-    categoryId: old.categoryId
+    categoryId: old.categoryId,
+    requirements: old.requirements
   }
 }
 
