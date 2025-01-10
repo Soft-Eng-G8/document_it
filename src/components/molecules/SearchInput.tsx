@@ -8,12 +8,11 @@ import {
   CommandItem,
   CommandList,
   CommandLoading,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
+} from "@/components/ui/multiple_uses/command"
 import { useEffect, useState } from "react"
-import { Button } from "../ui/multiple_uses/button"
+import { Button } from "@/components/ui/multiple_uses/button"
 import { Document , Category} from "@prisma/client"
+import { useDebouncedCallback } from 'use-debounce';
 
 type ExtendedDocument = Document & {
   category: Category
@@ -24,28 +23,27 @@ const SearchInput = () => {
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [items, setItems] = useState<ExtendedDocument[]>([])
-
+  const debouncedSearch = useDebouncedCallback(async (searchTerm) => {
+    setLoading(true)
+    try {
+      if (!searchTerm) {
+        setItems([])
+        return
+      }
+      const res = await fetch(`/api/search/document?query=${searchTerm}`)
+      const data = await res.json()
+      console.log(data)
+      setItems(data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, 500)
   // Debouncing effect for searching
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      setLoading(true)
-      try {
-        if (!search) {
-          setItems([])
-          return
-        }
-        const res = await fetch(`/api/search/document?query=${search}`)
-        const data = await res.json()
-        console.log(data)
-        setItems(data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [search])
+    debouncedSearch(search)
+  }, [search,debouncedSearch])
 
   // Keyboard shortcut effect
   useEffect(() => {
