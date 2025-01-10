@@ -109,7 +109,7 @@ model Contribution {
   documentId        String
   document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  status            String          @default("PENDING") // Accepted, Rejected
+  status            String          @default("Pending") // Accepted, Rejected
   type              String          @default("NEW") // EDIT
   createdAt         DateTime        @default(now())
   verifiedAt        DateTime?       

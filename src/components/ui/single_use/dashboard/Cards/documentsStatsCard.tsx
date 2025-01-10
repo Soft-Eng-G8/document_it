@@ -1,4 +1,5 @@
 "use client";
+import prisma from '@/lib/db';
 // Install the nivo packages if not already done
 // yarn add @nivo/pie
 import { ResponsivePie } from '@nivo/pie';
@@ -51,24 +52,25 @@ const MyResponsivePie = ({ data }: { data: any }) => (
 
 import React from 'react';
 
-function DocumentsStatsCard() {
+ function DocumentsStatsCard({visasNumber, civilNumber, otherNumber}: {visasNumber: any, civilNumber: any, otherNumber: any}) {
+ 
   const data = [
     {
       id: "Etat Civil",
       label: "Etat Civil",
-      value: 235,
+      value: civilNumber,
       color: "#68D391", // Example green color
     },
     {
       id: "Visas",
       label: "Visas",
-      value: 120,
+      value: visasNumber,
       color: "#F56565", // Example red color
     },
     {
       id: "Other",
       label: "Other",
-      value: 5,
+      value: otherNumber,
       color: "#63B3ED", // Example blue color
     },
   ];

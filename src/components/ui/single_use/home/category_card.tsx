@@ -15,7 +15,7 @@ interface MyCategory {
 
 function CategoryCard({category, symbol}: MyCategory) {
   return (
-    <div className='border h-[250px] w-[33] border-l-0 border-black/20 p-8'>
+    <div className='border h-[250px] w-[33] border-l-0 border-black/20 p-8 hover:cursor-pointer'>
       <div className='flex flex-col justify-between h-full'>
       <div className='flex flex-row justify-between'>
         <div className={`text-[20px] font text-black ${roboto700.className}`}>{category}</div>

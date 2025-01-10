@@ -5,6 +5,7 @@ import { Roboto } from 'next/font/google';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useRouter } from 'next/navigation'
 
 
 function Categories() {
@@ -17,6 +18,8 @@ function Categories() {
     slidesToScroll: 1,
     arrows: false
   };
+  const router = useRouter();
+  
   const categories = [
     {
       title: "Cat1",
@@ -40,7 +43,10 @@ function Categories() {
     <div className='flex flex-col '>
       <Slider {...settings}>
       {categories.map((category) => (
-        <CategoryCard key={category.id} category={category.title} symbol={""}/>
+        <button onClick={() => router.push("/category/id")} >
+          <CategoryCard key={category.id} category={category.title} symbol={""}/>
+        </button>
+        
       ))}
       </Slider>
 

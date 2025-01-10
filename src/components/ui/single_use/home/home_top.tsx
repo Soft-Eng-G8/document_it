@@ -47,18 +47,25 @@ function HomeTop({numberOfDocuments, targetRef}: {numberOfDocuments: number, tar
           <img src="/liltriangle.png" alt="" className='h-[25px]'/>
           </div>
           
+          <div className='flex flex-row justify-end w-full '>
+          <div>
           <div className='h-[50px] '>
           </div>
-          <div className='h-[30px]'></div>
           <img src="/bigpipe2.png" alt="" className='w-[300px]'/>
           <div className="flex flex-col items-center justify-center h-[100px] w-[200px] bg-gradient-to-b bg-mywhite shadow-md rounded-lg text-black font-bold text-[20px] ml-24">
             <h1>Over</h1> 
             <h1 className='text-[25px] text-foreground'>{numberOfDocuments}</h1>
             <h1>Documents</h1>
             </div>  
+          </div>
+          <div className='flex justify-center items-center flex-col h-full w-full' >
+            <h1 className='text-black font-semibold'>Find Your Documents</h1>
+            <div className='text-black font-semibold'>search bar</div>
+          </div>
+          </div>
 
                  
-             </div>
+        </div>
       </div>
   )
 }

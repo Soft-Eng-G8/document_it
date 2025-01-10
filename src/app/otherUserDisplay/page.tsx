@@ -1,4 +1,6 @@
 "use client";
+import Header from '@/components/ui/single_use/dashboard/header';
+import SideNavBar from '@/components/ui/single_use/dashboard/SideNavBar';
 import UserRow from '@/components/ui/single_use/dashboard/user_row';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react'
@@ -46,7 +48,11 @@ function UsersDisplay() {
   );
 
   return (
-    <div className="p-4">
+    <div className="flex items-start min-h-screen">
+      <SideNavBar/>
+      <div className="flex-1">
+        <Header />
+        <div className="p-4">
       <div>
         <h2 className="text-[20px] font-bold text-black">Users</h2>
         <h3 className="text-[16px] text-medium text-neutral-400">
@@ -83,6 +89,9 @@ function UsersDisplay() {
         )}
       </div>
     </div>
+      </div>
+    </div>
+   
   
   )
 }

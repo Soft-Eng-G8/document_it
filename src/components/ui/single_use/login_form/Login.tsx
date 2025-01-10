@@ -1,6 +1,6 @@
 'use client'
 "use client";
-import React, { useRef }, { useState } from 'react';
+import React, { useRef , useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/multiple_uses/resizable";
 import LoginPanel from './login_panel';
 import SignUpPanel from './sign_up';
+import { signIn } from 'next-auth/react';
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -53,7 +54,6 @@ interface FormData {
   password: string
 }
 
-import { signIn } from 'next-auth/react';
 interface ILogin {
   callbackUrl: string
 }
@@ -71,6 +71,7 @@ function Login(props: ILogin) {
     });
 
   };
+
 
 
 
