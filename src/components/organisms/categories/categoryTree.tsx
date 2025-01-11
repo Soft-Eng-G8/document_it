@@ -12,7 +12,7 @@ const ItemTree = ({items, compact, type}: IItemTree) => {
   return (
     <div className='space-y-3'>
     {
-      items.map(item => <ItemEntry compact={compact} item={item} type={type}/>)
+      items.map(item => <ItemEntry key={item.id} compact={compact} item={item} type={type}/>)
     }
     </div>
   )
