@@ -3,6 +3,7 @@ import React from 'react';
 import Login from '../../components/ui/single_use/login_form/Login';
 import { Navbar } from '@/components/ui/multiple_uses/navbar';
 import { useParams, useSearchParams } from 'next/navigation';
+import Header from '@/components/ui/single_use/dashboard/header';
   //first thing is if you wanna return navbar
 function page() {
   const params = useSearchParams()
@@ -10,6 +11,7 @@ function page() {
   return (  
     <>
     <div className='flex flex-col bg-mygrey'>
+      <Header/>
         <div className="sticky top-0 w-full z-50  p-4">
                 <div className="flex justify-center">
                   <div></div>

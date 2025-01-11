@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/multiple_uses/resizable"
 import { signIn } from 'next-auth/react'
 import { SignUp } from './sign_up'
+import Header from '../dashboard/header'
 
 interface ILogin {
   callbackUrl: string
@@ -34,6 +35,7 @@ function Login(props: ILogin) {
   }
 
   return (
+    
     <div className="container flex items-center justify-center">
       <ResizablePanelGroup
         direction="horizontal"
