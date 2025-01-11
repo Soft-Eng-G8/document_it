@@ -61,7 +61,6 @@ const categories: Category[] = [
 export default function Page() {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main className="flex flex-row ml-20 space-y-6 mt-8 justify-between w-auto">
        <div className='flex flex-col gap-6 w-full'>
        {categories.map((category, index) => (

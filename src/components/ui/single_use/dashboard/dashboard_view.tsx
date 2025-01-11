@@ -4,7 +4,7 @@ import SideNavBar from "./SideNavBar";
 import Header from "./header";
 import AdminPanel from "@/app/admin_panel/page";
 import UsersDisplay from "@/app/(withNavbar)/otherUserDisplay/page";
-import ContributionsComponent from "@/app/(withNavbar)/contributions_panel/page";
+import ContributionsComponent from "@/app/contributions_panel/page";
 import { useRouter } from 'next/navigation'
 
 function DashboardView() {

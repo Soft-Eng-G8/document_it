@@ -1,4 +1,5 @@
 import CategoryComponents from '@/components/ui/single_use/category/categoriesComponents'
+import Header from '@/components/ui/single_use/dashboard/header';
 import prisma from '@/lib/db';
 
 
@@ -17,6 +18,7 @@ export default async function category({params}: { params: { id: string } }) {
         });
   return (
     <div>
+      <Header/>
     <CategoryComponents documents={documents} category={category} />
     </div>
   )
