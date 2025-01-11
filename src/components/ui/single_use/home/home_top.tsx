@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../../multiple_uses/button'
 import { Inter, Roboto } from 'next/font/google';
+import SearchInput from '@/components/molecules/SearchInput';
 
 const roboto = Roboto({ weight: '500', subsets: ['cyrillic-ext', 'greek'] });
 
@@ -60,7 +61,7 @@ function HomeTop({numberOfDocuments, targetRef}: {numberOfDocuments: number, tar
           </div>
           <div className='flex justify-center items-center flex-col h-full w-full' >
             <h1 className='text-black font-semibold'>Find Your Documents</h1>
-            <div className='text-black font-semibold'>search bar</div>
+            <SearchInput/>
           </div>
           </div>
 
