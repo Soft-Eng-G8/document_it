@@ -16,9 +16,9 @@ import { getSession, signOut, useSession } from "next-auth/react";
 
 function SideNavBar() {
   const session = useSession()
+  const router = useRouter();
   if(session.status === "loading") return <div>Waiting</div>
   console.log(session )
-  const router = useRouter();
   const menuList = [
     {
       group: "Dashboard",
