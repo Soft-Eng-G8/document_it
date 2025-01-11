@@ -16,6 +16,7 @@ export default async function CompareCard() {
 
   return (
     <div className="min-h-screen flex bg-background flex-col">
+      <Header />
       <ClientRefs 
         numberOfDocuments={numberOfDocuments}
         numOfContributions={numOfContributions}
