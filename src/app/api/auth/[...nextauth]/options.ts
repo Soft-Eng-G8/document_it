@@ -6,6 +6,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { verify, hash } from 'argon2'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { getPermsFromRole } from "@/scripts/util";
 
 
 export const options: NextAuthOptions = {
@@ -55,8 +56,8 @@ export const options: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.name = user.name,
         token.email = user.email
-        token.roles = user.roles
       }
       return token
     },
@@ -68,14 +69,16 @@ export const options: NextAuthOptions = {
         // session.user.roles = token.roles as {id: string, name: string}[]
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          include: { roles: true },
+          include: { roles: { include: { permissions: true } } },
         });
 
         if(dbUser) {
           session.user = {
             id: dbUser.id,
+            name: dbUser.name,
             email: dbUser.email || '',
-            roles: dbUser.roles.map((role) => ({ id: role.id, name: role.name })),
+            // roles: dbUser.roles.map((role) => ({ id: role.id, name: role.name })),
+            permissions: getPermsFromRole(dbUser.roles)
           };
         }
       }

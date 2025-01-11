@@ -1,15 +1,22 @@
 import Link from 'next/link'
-import { Settings, PlusSquare, LayoutGrid, LogIn } from 'lucide-react'
+import { Settings, PlusSquare, LayoutGrid, LogIn, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/multiple_uses/avatar"
+import { getServerSession } from 'next-auth'
+import { getSession, signOut } from 'next-auth/react'
+import LogOutButton from './logoutButton'
+import { getServerSideProps } from 'next/dist/build/templates/pages'
+import { options } from '@/app/api/auth/[...nextauth]/options'
 
 // Mock authentication state - replace with your actual auth logic
-const isLoggedIn = false
-const user = {
-  name: "John Doe",
-  image: "/placeholder.svg?height=32&width=32"
-}
+// const isLoggedIn = false
+// const user = {
+//   name: "John Doe",
+//   image: "/placeholder.svg?height=32&width=32"
+// }
 
-export default function Header() {
+export default async function Header() {
+  const session = await getServerSession(options)
+  console.log(session)
   return (
     <header className="w-full border-b bg-white shadow-lg">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -49,10 +56,10 @@ export default function Header() {
           </Link>
 
           {/* Conditional rendering based on auth state */}
-          {isLoggedIn ? (
+          {session ? (
             <Avatar>
-              <AvatarImage src={user.image} alt={user.name} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={session.user.image || ''} alt={session.user.name || ''} />
+              <AvatarFallback>{session.user.name?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
           ) : (
             <Link 
@@ -63,6 +70,9 @@ export default function Header() {
               Login
             </Link>
           )}
+          { session && (  
+            <LogOutButton />
+          ) }
         </nav>
       </div>
     </header>

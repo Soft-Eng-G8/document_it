@@ -1,6 +1,11 @@
+import Unauthorized from '@/components/ui/multiple_uses/Unauthorized'
 import Header from '@/components/ui/single_use/dashboard/header'
 import SideNavBar from '@/components/ui/single_use/dashboard/SideNavBar'
+import prisma from '@/lib/db'
 import { Cog, Bell, Moon, User } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
+import { options } from '../api/auth/[...nextauth]/options'
 
 interface SettingsSection {
   id: string
@@ -15,7 +20,9 @@ interface SettingsSection {
   }[]
 }
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await getServerSession(options)
+  if(!session) return <Unauthorized />
   const sections: SettingsSection[] = [
     {
       id: 'profile',
@@ -26,67 +33,31 @@ export default function SettingsPage() {
           id: 'name',
           label: 'Display Name',
           type: 'text',
-          value: 'Sarah Chen'
+          value: session.user.name || "John Doe"
         },
         {
           id: 'email',
           label: 'Email Address',
           type: 'email',
-          value: 'sarah@example.com'
+          value: session.user.email || "Saluso_greg@gmail.com"
         },
-        {
-          id: 'role',
-          label: 'Role',
-          type: 'select',
-          value: 'contributor',
-          options: ['admin', 'contributor', 'viewer']
-        }
+
       ]
     },
-    {
-      id: 'notifications',
-      title: 'Notification Preferences',
-      icon: <Bell className="h-5 w-5" />,
-      fields: [
-        {
-          id: 'email_notifications',
-          label: 'Email Notifications',
-          type: 'checkbox',
-          value: true
-        },
-        {
-          id: 'contribution_updates',
-          label: 'Contribution Updates',
-          type: 'checkbox',
-          value: true
-        },
-        {
-          id: 'mention_notifications',
-          label: 'Mentions',
-          type: 'checkbox',
-          value: true
-        }
-      ]
-    },
-    {
-      id: 'appearance',
-      title: 'Appearance',
-      icon: <Moon className="h-5 w-5" />,
-      fields: [
-        {
-          id: 'theme',
-          label: 'Theme',
-          type: 'select',
-          value: 'system',
-          options: ['light', 'dark', 'system']
-        }
-      ]
-    }
   ]
 
   async function handleSubmit(formData: FormData) {
     'use server'
-    // Handle form submission here
+    if(session)
+      await prisma.user.update({
+      where: {
+        id: session.user.id
+      }, data: {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string 
+      }
+    })
+    await redirect('/settings')
   }
 
   return (
