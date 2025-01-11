@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Settings, PlusSquare, LayoutGrid, LogIn } from 'lucide-react'
+import { Settings, PlusSquare, LayoutGrid, LogIn, Presentation } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/multiple_uses/avatar"
 
 // Mock authentication state - replace with your actual auth logic
@@ -49,11 +49,11 @@ export default function Header() {
           </Link>
 
           <Link 
-            href="/settings" 
+            href="/overview" 
             className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            <Settings className="h-4 w-4" />
-            Settings
+            <Presentation className="h-4 w-4" />
+            Dashboard
           </Link>
 
           {/* Conditional rendering based on auth state */}
