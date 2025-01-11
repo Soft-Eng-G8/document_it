@@ -1,47 +1,61 @@
-'use client'
 import {Button} from "@/components/ui/multiple_uses/button"
 import { ChevronRight, FileCheck2 } from "lucide-react"
-import { getServerSession } from "next-auth"
 import Image from "next/image"
-import { useState } from "react"
+import ContributionView from "./contView"
+import prisma from "@/lib/db"
+import { getSession } from "next-auth/react"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
 
 
-const Contributions = () => {
-  const cont_categories = ['All', 'Accepted', 'Pending', 'Rejected']
-  const [selectedCat, setSelectedCat] = useState(0)
+const Contributions = async() => {
+  const session = await getServerSession()
+  
+  if (!session) {
+    return redirect('/login')
+  }
+  console.log(session)
 
-  const contributions = [
-    {
-        documentName: "Visa Application",
-        contributor: { name: "Arabet Hakim" },
-        date: "2024-12-25",
-        status: "Pending" as "Pending",
-    },
-    {
-        documentName: "Visa Application",
-        contributor: { name: "John Doe" },
-        date: "2024-12-25",
-        status: "Reviewed" as "Reviewed",
-    },
-    {
-        documentName: "Visa Application",
-        contributor: { name: "Arabet Hakim" },
-        date: "2024-12-25",
-        status: "Pending" as "Pending",
-    },
-    {
-        documentName: "Visa Application",
-        contributor: { name: "John Doe" },
-        date: "2024-12-25",
-        status: "Reviewed" as "Reviewed",
-    },
-    {
-        documentName: "Visa Application",
-        contributor: { name: "Arabet Hakim" },
-        date: "2024-12-25",
-        status: "Pending" as "Pending",
-    },]
+
+  // const contributions = [
+  //   {
+  //       documentName: "Visa Application",
+  //       contributor: { name: "Arabet Hakim" },
+  //       date: "2024-12-25",
+  //       status: "Pending" as "Pending",
+  //   },
+  //   {
+  //       documentName: "Visa Application",
+  //       contributor: { name: "John Doe" },
+  //       date: "2024-12-25",
+  //       status: "Reviewed" as "Reviewed",
+  //   },
+  //   {
+  //       documentName: "Visa Application",
+  //       contributor: { name: "Arabet Hakim" },
+  //       date: "2024-12-25",
+  //       status: "Pending" as "Pending",
+  //   },
+  //   {
+  //       documentName: "Visa Application",
+  //       contributor: { name: "John Doe" },
+  //       date: "2024-12-25",
+  //       status: "Reviewed" as "Reviewed",
+  //   },
+  //   {
+  //       documentName: "Visa Application",
+  //       contributor: { name: "Arabet Hakim" },
+  //       date: "2024-12-25",
+  //       status: "Pending" as "Pending",
+  //   },]
+  const contributions = await prisma.contribution.findMany({
+    // where: {
+      // userId
+    // }
+    include: {
+      user: true
+  }})
   
   return (
     <div className="w-[90vw] m-auto pt-20">
@@ -52,35 +66,7 @@ const Contributions = () => {
             <Button className="rounded-full text-white pt-6 pb-6">New Contribution</Button>
             </div>
 
-          <div className="mt-10">
-            <div className="
-              border-[#2292E2] border-b-2
-              flex 
-            ">
-            {cont_categories.map((cat, i) => 
-              <button key={i} className={`
-                p-3
-                ${i == selectedCat ? 'font-bold text-black text-[16px] ': 'text-[16px] '}
-                hover:scale-110 transition-transform 
-              `}
-              onClick={() => setSelectedCat(i)}
-              >
-                {cat}
-              </button> 
-            )}
-            </div>
-            {/* Contribution List */}
-            <div className="overflow-y-scroll h-[60vh] ">
-              {contributions.map((cont, index)=>
-                <ContributionCard key={index} 
-                documentName={cont.documentName}
-                contributor={cont.contributor}
-                date={cont.date}
-                status={cont.status}
-                />
-              )}
-            </div>
-          </div>
+          <ContributionView contributions={contributions} />
 
 
         </div>

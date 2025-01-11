@@ -12,7 +12,7 @@ export default async function category({params}: { params: { id: string } }) {
   
       const documents = await prisma.document.findMany({
           where: {
-            categoryId: params.id.toString()
+            categoryId: params.id
           }
         });
   return (
