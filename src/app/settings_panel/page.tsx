@@ -68,25 +68,10 @@ export default function SettingsPage() {
         }
       ]
     },
-    {
-      id: 'appearance',
-      title: 'Appearance',
-      icon: <Moon className="h-5 w-5" />,
-      fields: [
-        {
-          id: 'theme',
-          label: 'Theme',
-          type: 'select',
-          value: 'system',
-          options: ['light', 'dark', 'system']
-        }
-      ]
-    }
   ]
 
   async function handleSubmit(formData: FormData) {
     'use server'
-    // Handle form submission here
   }
 
   return (<div className="flex items-start min-h-screen">

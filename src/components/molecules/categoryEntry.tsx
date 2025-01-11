@@ -22,9 +22,9 @@ const ItemEntry = ({item, compact, type}: IItemEntry) => {
     }
   };
   return (
-    <div className="item_entry mb-5">
+    <div className="item_entry mb">
       <div className={`
-      w-full bg-blue-600  border rounded-lg p-${['all', 'category'].includes(type) ? 5 : 2} 
+      w-full bg-foreground  border rounded-lg p-${['all', 'category'].includes(type) ? 5 : 2} 
       text-white text-xl ${['all', 'category'].includes(type) ? `font-bold` : ''} 
       flex items-center mt-3 ${!compact ? 'justify-between': ''}
       cursor-pointer
