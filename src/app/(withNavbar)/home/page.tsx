@@ -9,8 +9,8 @@ import TopContributors from '@/components/ui/single_use/home/top_contributors';
 import prisma from '@/lib/db';
 
 export default async function CompareCard() {
-  const numberOfDocuments = 150;
-  const numOfContributions = 236;
+  const numberOfDocuments = await prisma.document.count() - 1;
+  const numOfContributions = await prisma.contribution.count() - 1;
 
   const categories = await prisma.category.findMany();
 
