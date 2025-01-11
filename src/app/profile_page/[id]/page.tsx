@@ -13,16 +13,21 @@ async function ProfilePage({params}: { params: { id: string } })  {
       id: params.id,
     },
     include:{
-      role: true
+      roles: true
     }
   
   });
 
-  const full_name = "Arabet Hakim";
-  const join_date = "2021-10-12";
-  const role = user?.role.name;
-  const contributions = 36;
-  const reviews = 12;
+  const full_name = user?.name ?? "Arabet Hakim";
+  const join_date = user?.createdAt.toDateString() ?? "2024-12-25";
+  const roles = user?.roles;
+  const contributions = await prisma.contribution.count({
+    where: {
+      userId: params.id
+    }
+  });
+
+  const reviews = 4;
   const about = `
   - diplômé de l'école supérieure de droit 
   - 12 ans d'expérience
@@ -46,13 +51,15 @@ async function ProfilePage({params}: { params: { id: string } })  {
     <div  >
       <Header/>
         <div className='flex flex-row'>
-          <div>
+          <div className='scale-[0.9]'>
             <div className='flex justify-start  mt-10 ml-20 items-center'>
             <PFP/>
             <div className='ml-10 flex flex-col'>
               <div className='text-[25px] font-bold text-black'>{full_name}</div>
               <div className='text-[15px] text-neutral-400'>Joined at {join_date}</div>
-              <div className='text-[15px] text-black font-semibold'>{role}</div>
+              {roles?.map((role, key) => (
+                <div>{role.name}</div>
+              ))}
             </div>
             </div>
 

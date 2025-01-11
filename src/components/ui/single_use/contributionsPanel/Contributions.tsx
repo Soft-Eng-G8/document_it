@@ -1,11 +1,24 @@
-import React from 'react'
 import ContributionsRowHead from './contributions_head';
 import ContributionRow from './contribution_row';
+import prisma from '@/lib/db';
 
-function ContributionsPanel() {
-    const totalConts = 17;
-    const pending = 7;
-    const reviewed = 10;
+async function  ContributionsPanel() {
+    const pending = await prisma.contribution.count({
+        where: {
+            status: "Pending",
+        },
+    });
+    const reviewed = await prisma.contribution.count({
+        where: {
+            status: "Reviewed",
+        },
+    });;
+    const totalConts = pending + reviewed;
+    const fetchedContributions = await prisma.contribution.findMany({
+        include: {
+            user: true,
+        },
+    })
     const contributions = [
         {
             documentName: "Visa Application",
@@ -76,12 +89,13 @@ function ContributionsPanel() {
   </div>
   <div className="pl-10 pr-10">
     <div className="max-h-[200px] overflow-y-auto">
-      {contributions.map((contribution, key) => (
+     
+      {fetchedContributions.map((contribution, key) => (
         <ContributionRow
           key={key}
-          documentName={contribution.documentName}
-          contributor={contribution.contributor}
-          date={contribution.date}
+          documentName={contribution.oldTitle ?? ""} 
+          contributor={contribution.user}
+          date={contribution.createdAt.toLocaleDateString()}
           status={contribution.status}
         />
       ))}

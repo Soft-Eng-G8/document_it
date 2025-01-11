@@ -4,7 +4,7 @@ interface ContributionsRowHeadProps {
   documentName: string;
   contributor: { name: string; imageUrl?: string };
   date: string;
-  status: "Pending" | "Reviewed";
+  status: string;
 }
 
 // Utility to generate consistent colors based on a string

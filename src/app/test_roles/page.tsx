@@ -11,12 +11,8 @@ async function TestRoles()  {
       }
     })
     const users = await prisma.user.findMany({
-      where:{
-        email: "testing@email.com"
-      },
-      include:{
-        role: true
-      }
+     
+      
     })
     const count = await prisma.role.count()
   return (
@@ -38,7 +34,6 @@ async function TestRoles()  {
         <div className='h-[50px]'></div>
         {users.map((user) => (
         <div key={user.id}>
-          <Link href={`/test_roles/${user.id}`}>{user.role.name}</Link>
         </div>
         ))}
     </div>

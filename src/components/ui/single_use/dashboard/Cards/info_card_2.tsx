@@ -3,12 +3,10 @@ import React from 'react';
 
 function InfoCard2({
   date,
-  number,
   docName,
   user
 }: {
   date: string;
-  number: number;
   docName: string;
   user: string;
 }) {

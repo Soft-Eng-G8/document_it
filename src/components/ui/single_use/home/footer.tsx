@@ -7,7 +7,7 @@ function Footer() {
   return (
     <div className='h-[300px] bg-foreground rounded-t-3xl'>
       <div className={`flex text-mywhite text-[25px] font-bold pr-10 pt-10 ${roboto.className} justify-end`}>
-        <div>My Dad told me this site will make his life easier</div>
+        <div></div>
       </div>
 
       <div className='flex flex-row justify-between items-end'>
