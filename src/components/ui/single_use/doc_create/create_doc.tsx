@@ -60,14 +60,13 @@ function DocsCreate({categories}: catInterface) {
     logo: null,
     pdf: null
   })
-  const userId = userData.data?.user.id
-  React.useEffect(() => {
-    setFormData(prev => ({
-      ...prev,
-      userId: userId || ''
-    }))
-  }, [])
   if(userData.status === "loading") return <div>Waiting</div>
+  const userId = userData.data?.user.id
+  if(!userId) return <div>Not authed</div>;
+  else setFormData({
+    ...formData,
+    userId
+  })
 
     const phases = [
         {
@@ -109,7 +108,7 @@ function DocsCreate({categories}: catInterface) {
                         setFormData(prev => ({ ...prev, categoryId: value }))}}
                     >
                                   {
-                      categories.map(cat => <DropdownMenuRadioItem value={cat.id} key={cat.id}>{cat.title}</DropdownMenuRadioItem>)
+                      categories.map(cat => <DropdownMenuRadioItem value={cat.title} key={cat.id}>{cat.title}</DropdownMenuRadioItem>)
                       }
                       
                     </DropdownMenuRadioGroup>
@@ -375,12 +374,15 @@ function DocsCreate({categories}: catInterface) {
         //   dataToSend.append("files", file.file);
         // });
         try {
-
+          // const response = await fetch("/api/docForm", {
+          //   method: "POST",
+          //   body: dataToSend
+          // })
           const response = await fetch('/api/documents/create', {
-            body: dataToSend,
-            method: 'POST'
+            body: dataToSend
           })
-
+          // manager.addDocumentPending(formData, {
+          //   userId,
           // })
         } catch (e) {
           console.error(e)
