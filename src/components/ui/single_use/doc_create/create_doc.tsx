@@ -375,16 +375,12 @@ function DocsCreate({categories}: catInterface) {
         //   dataToSend.append("files", file.file);
         // });
         try {
-          // const response = await fetch("/api/docForm", {
-          //   method: "POST",
-          //   body: dataToSend
-          // })
+
           const response = await fetch('/api/documents/create', {
             body: dataToSend,
             method: 'POST'
           })
-          // manager.addDocumentPending(formData, {
-          //   userId,
+
           // })
         } catch (e) {
           console.error(e)

@@ -57,6 +57,7 @@ export const options: NextAuthOptions = {
       if (user) {
         const dbUser = await prisma.user.findUnique({where: { id: user.id }, include: { roles: { include: { permissions: true } } }})
         token.id = user.id
+        token.name = user.name,
         token.email = user.email!
         token.permissions = getPermsFromRole(dbUser!.roles)
       }
@@ -76,6 +77,9 @@ export const options: NextAuthOptions = {
         if(dbUser) {
           session.user = {
             id: dbUser.id,
+
+            name: dbUser.name,
+            email: dbUser.email || '',
             permissions: getPermsFromRole(dbUser.roles)
           };
         }

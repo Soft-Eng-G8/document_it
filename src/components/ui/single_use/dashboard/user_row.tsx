@@ -4,26 +4,22 @@ import { Button } from "../../multiple_uses/button";
 
 interface UserProps {
   title: string;
-  imageUrl?: string; // Optional imageUrl
+  imageUrl?: string;
   email: string;
   roles: string[];
+  onRemove: (email: string) => void; // Add the onRemove prop
 }
 
-// Role color mapping
 const roleColors: Record<string, string> = {
-  admin: "#FF5733", // Red
-  contributor: "#3357FF" , // Green
-  viewer: "#000000", // Blue
+  admin: "#FF5733",
+  contributor: "#3357FF",
+  viewer: "#000000",
 };
 
-
-
-const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles }) => {
+const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles, onRemove }) => {
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
 
-  // Ensure consistent color for each user
   const userColor = useMemo(() => {
-
     return colorMap[email];
   }, [email, colorMap]);
 
@@ -37,7 +33,7 @@ const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles }) => {
             className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
             style={{ backgroundColor: userColor }}
           >
-            {title.charAt(0).toUpperCase()} {/* First letter of the title */}
+            {title.charAt(0).toUpperCase()}
           </div>
         )}
         <div>
@@ -45,26 +41,21 @@ const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles }) => {
           <h4 className="text-[14px] font-medium text-neutral-400">{email}</h4>
         </div>
       </div>
-      <div>
-        <div className="flex flex-row gap-2">
-          {roles.map((role, key) => {
-            const textColor = roleColors[role.toLowerCase()] || "#000";
-
-            return (
-              <div
-                key={key}
-                className="rounded-2xl text-sm font-semibold pt-1 pb-1 pr-3 pl-3 bg-neutral-200"
-                style={{
-                  color: textColor,
-                }}
-              >
-                {role}
-              </div>
-            );
-          })}
-        </div>
+      <div className="flex gap-2">
+        {roles.map((role, key) => (
+          <div
+            key={key}
+            className="rounded-2xl text-sm font-semibold pt-1 pb-1 pr-3 pl-3 bg-neutral-200"
+            style={{ color: roleColors[role.toLowerCase()] || "#000" }}
+          >
+            {role}
+          </div>
+        ))}
       </div>
-      <Button className="bg-neutral-300 hover:bg-neutral-400 text-black font-semibold">
+      <Button
+        className="bg-neutral-300 hover:bg-neutral-400 text-black font-semibold"
+        onClick={() => onRemove(email)} // Use the onRemove function
+      >
         Remove
       </Button>
     </div>

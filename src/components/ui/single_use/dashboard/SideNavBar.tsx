@@ -9,27 +9,25 @@ import {
   User,
 } from "lucide-react";
 import UserItem from "./user_item";
+import { useRouter } from 'next/navigation'
 
-interface SideNavBarProps {
-  onMenuSelect: (id: string) => void;
-}
 
-function SideNavBar({ onMenuSelect }: SideNavBarProps) {
+function SideNavBar() {
+    const router = useRouter();
   const menuList = [
     {
       group: "Dashboard",
       items: [
-        { id: "overview", text: "Overview", icon: <LayoutDashboard /> },
-        { id: "users", text: "Users", icon: <User /> },
-        { id: "contributions", text: "Contributions", icon: <BetweenHorizontalEnd /> },
-        { id: "adminPanel", text: "Admin Panel", icon: <Shield /> },
+        { id: "overview", text: "Overview", icon: <LayoutDashboard />, link: '/overview'},
+        { id: "users", text: "Users", icon: <User />, link: '/otherUserDisplay' },
+        { id: "contributions", text: "Contributions", icon: <BetweenHorizontalEnd />, link: '/contributions_panel'},
       ],
     },
     {
       group: "Menu",
       items: [
-        { id: "settings", text: "Settings", icon: <Settings /> },
-        { id: "logout", text: "Logout", icon: <LogOut /> },
+        { id: "settings", text: "Settings", icon: <Settings /> , link: '/settings_panel'},
+        { id: "logout", text: "Logout", icon: <LogOut />, link: '/overview' },
       ],
     },
   ];
@@ -49,7 +47,7 @@ function SideNavBar({ onMenuSelect }: SideNavBarProps) {
               {menu.items.map((item) => ( 
                 <li key={item.id}>
                   <button 
-                    onClick={() => onMenuSelect(item.id)}
+                    onClick={() => router.push(item.link)}
                     className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-200 text-gray-700 w-full text-left"
                   >
                     <span className="w-5 h-5">{item.icon}</span>

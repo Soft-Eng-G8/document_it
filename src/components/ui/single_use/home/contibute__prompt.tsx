@@ -2,6 +2,7 @@ import { Sparkle } from 'lucide-react'
 import { Roboto } from 'next/font/google';
 import React from 'react'
 import { Button } from '../../multiple_uses/button';
+import { useRouter } from 'next/navigation'
 
 const robotoBold = Roboto({ weight: '900' , subsets: ['cyrillic-ext', 'greek'] });
 const roboto = Roboto({ weight: '500' , subsets: ['cyrillic-ext', 'greek'] });
@@ -11,10 +12,12 @@ function ContributePrompt({targetRef}: {targetRef: any}) {
   const handleScroll = () => {
     targetRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  const router = useRouter();
+
   return (
     <div className=' flex flex-col p h-[400px] w-[400px] bg-foreground rounded-2xl shadow-md m-10 rounded-tr-3xl'>
       <div className='flex flex-row justify-end items-center'>
-      <button className='rounded-full bg-foreground p-2 w-fit hover:bg-foreground/90 self-end'>
+      <button onClick={() => router.push("/doc_create")} className='rounded-full bg-foreground p-2 w-fit hover:bg-foreground/90 self-end'>
        <Sparkle fill="white" className='text-white' size={36} />
        </button>
       </div>

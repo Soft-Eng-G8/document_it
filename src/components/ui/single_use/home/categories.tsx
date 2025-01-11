@@ -1,13 +1,13 @@
-"use client";
 import React from 'react'
 import CategoryCard from './category_card'
 import { Roboto } from 'next/font/google';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useRouter } from 'next/navigation'
 
 
-function Categories() {
+function Categories({categories}: {categories: any}) {
 
   var settings = {
     dots: false,
@@ -17,30 +17,16 @@ function Categories() {
     slidesToScroll: 1,
     arrows: false
   };
-  const categories = [
-    {
-      title: "Cat1",
-      id: 1,
-    },
-    {
-      title: "Cat2",
-      id: 2,
-    },
-    {
-      title: "Cat3",
-      id: 3,
-    },
-    {
-      title: "Cat4",
-      id: 3,
-    },
-  ]
-
+  const router = useRouter();
+  
   return (
     <div className='flex flex-col '>
       <Slider {...settings}>
-      {categories.map((category) => (
-        <CategoryCard key={category.id} category={category.title} symbol={""}/>
+      {categories.map((category: { id: React.Key | null | undefined; title: string; }, key: React.Key | null | undefined) => (
+        <button onClick={() => router.push(`/category/${category.id}`)} key={key}>
+          <CategoryCard key={category.id} category={category.title} symbol={""}/>
+        </button>
+        
       ))}
       </Slider>
 
