@@ -16,22 +16,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/multiple_uses/dropdown-menu"
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, ImageUp } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_uses/alert"
 import prisma from "@/lib/db"
 import { ICategory } from "@/scripts/util"
 import { redirect } from "next/navigation"
+import manager, { IDocumentData } from "@/app/manager"
+import { useSession } from "next-auth/react"
 
 interface FormData {
   title: string;
-  additionalOrg: string;
-  categoryId: string;
   description: string;
+  
+  categoryId: string;
   imageUrl: string;
   requirements: string[];
-  additionalContent: string;
+  additional: string;
   logo: File | null;
-  files: { name: string; file: File }[];
+  pdf: { name: string; file: File }[];
 }
 
 const DEFAULT_LOGO_URL = "https://i.ibb.co/VLjJjLg/ljomhorya.png"
@@ -42,10 +44,12 @@ interface catInterface  {
 }
 
 function DocsCreate({categories}: catInterface) {
+  // const { decodedToken, error }
+
     const phases = [
         {
           title: "Main Info",
-          content: ({ formData, setFormData, errors }: { formData: FormData; setFormData: React.Dispatch<React.SetStateAction<FormData>>; errors: string[] }) => (
+          content: ({ formData, setFormData, errors }: { formData: IDocumentData; setFormData: React.Dispatch<React.SetStateAction<IDocumentData>>; errors: string[] }) => (
             <div className="space-y-4">
               <p>Please fill out the following information:</p>
               <Input 
@@ -56,7 +60,7 @@ function DocsCreate({categories}: catInterface) {
               />
               <Input 
                 placeholder="Organization Name" 
-                value={formData.additionalOrg}
+                value={formData.additional}
                 onChange={(e) => setFormData(prev => ({ ...prev, additionalOrg: e.target.value }))}
                 required
               />
@@ -102,17 +106,17 @@ function DocsCreate({categories}: catInterface) {
         },
         {
           title: "Requirements & Observations",
-          content: ({ formData, setFormData, errors }: { formData: FormData; setFormData: React.Dispatch<React.SetStateAction<FormData>>; errors: string[] }) => (
+          content: ({ formData, setFormData, errors }: { formData: IDocumentData; setFormData: React.Dispatch<React.SetStateAction<IDocumentData>>; errors: string[] }) => (
             <div className="space-y-4">
               <div>
                 <Label htmlFor="requirements">Requirements</Label>
                 {formData.requirements.map((req, index) => (
                   <div key={index} className="flex items-center space-x-2 mt-2">
                     <Input
-                      value={req}
+                      value={req.title}
                       onChange={(e) => {
                         const newReqs = [...formData.requirements];
-                        newReqs[index] = e.target.value;
+                        newReqs[index].title = e.target.value;
                         setFormData(prev => ({ ...prev, requirements: newReqs }));
                       }}
                       placeholder={`Requirement ${index + 1}`}
@@ -133,7 +137,7 @@ function DocsCreate({categories}: catInterface) {
                 ))}
                 <Button
                   className="mt-2"
-                  onClick={() => setFormData(prev => ({ ...prev, requirements: [...prev.requirements, ''] }))}
+                  onClick={() => setFormData(prev => ({ ...prev, requirements: [...prev.requirements, {title: '', description: ''}] }))}
                 >
                   Add Requirement
                 </Button>
@@ -142,7 +146,7 @@ function DocsCreate({categories}: catInterface) {
                 <Label htmlFor="observations">Observations</Label>
                 <Textarea
                   id="observations"
-                  value={formData.additionalContent}
+                  value={formData.additional}
                   onChange={(e) => setFormData(prev => ({ ...prev, additionalContent: e.target.value }))}
                   placeholder="Enter your observations"
                   className="min-h-[100px]"
@@ -161,108 +165,165 @@ function DocsCreate({categories}: catInterface) {
               )}
             </div>
           )
-        },
-        {
-          title: "Upload Files",
-          content: ({ formData, setFormData }: { formData: FormData; setFormData: React.Dispatch<React.SetStateAction<FormData>> }) => (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="logo">Upload Logo (optional)</Label>
-                <Input
-                  id="logo"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setFormData(prev => ({ ...prev, logo: file, imageUrl: URL.createObjectURL(file) }));
-                    }
-                  }}
-                />
-                <p className="text-sm text-gray-500 mt-1">If no logo is uploaded, a default logo will be used.</p>
-              </div>
-              <div>
-                <Label htmlFor="files">Upload PDF Files (optional)</Label>
-                {formData.files.map((file, index) => (
-                  <div key={index} className="flex items-center space-x-2 mt-2">
-                    <Input
-                      value={file.name}
-                      onChange={(e) => {
-                        const newFiles = [...formData.files];
-                        newFiles[index].name = e.target.value;
-                        setFormData(prev => ({ ...prev, files: newFiles }));
-                      }}
-                      placeholder="File Title"
-                    />
-                    <span>{file.file.name}</span>
-                    <Button
-                      variant="secondary"
-                      onClick={() => {
-                        const newFiles = formData.files.filter((_, i) => i !== index);
-                        setFormData(prev => ({ ...prev, files: newFiles }));
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                <Input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setFormData(prev => ({
-                        ...prev,
-                        files: [...prev.files, { name: '', file }]
-                      }));
-                    }
-                  }}
-                />
-              </div>
+        }, {
+          title: 'Upload Files',
+          content: ({ formData, setFormData }: { formData: IDocumentData; setFormData: React.Dispatch<React.SetStateAction<IDocumentData>> }) => (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="logo">Upload Logo (optional)</Label>
+              <Input
+                id="logo"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setFormData((prev) => ({ ...prev, logo: file }));
+                  }
+                }}
+              />
+              <p className="text-sm text-gray-500 mt-1">If no logo is uploaded, a default logo will be used.</p>
             </div>
-          )
+
+            <div>
+              <Label htmlFor="pdf">Upload PDF File</Label>
+              {formData.pdf && (
+                <div className="flex items-center space-x-2 mt-2">
+                  <span>{formData.pdf.name}</span>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, pdf: null }));
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
+              <Input
+                id="pdf"
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setFormData((prev) => ({ ...prev, pdf: file }));
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )
+
         },
+
+
+        
+        // {
+        //   title: "Upload Files",
+        //   content: ({ formData, setFormData }: { formData: IDocumentData; setFormData: React.Dispatch<React.SetStateAction<FormData>> }) => (
+        //     <div className="space-y-4">
+        //       <div>
+        //         <Label htmlFor="logo">Upload Logo (optional)</Label>
+        //         <Input
+        //           id="logo"
+        //           type="file"
+        //           accept="image/*"
+        //           onChange={(e) => {
+        //             const file = e.target.files?.[0];
+        //             if (file) {
+        //               setFormData(prev => ({ ...prev, logo: file, imageUrl: URL.createObjectURL(file) }));
+        //             }
+        //           }}
+        //         />
+        //         <p className="text-sm text-gray-500 mt-1">If no logo is uploaded, a default logo will be used.</p>
+        //       </div>
+        //       <div>
+        //         <Label htmlFor="files">Upload PDF Files (optional)</Label>
+        //         {formData.files.map((file, index) => (
+        //           <div key={index} className="flex items-center space-x-2 mt-2">
+        //             <Input
+        //               value={file.name}
+        //               onChange={(e) => {
+        //                 const newFiles = [...formData.files];
+        //                 newFiles[index].name = e.target.value;
+        //                 setFormData(prev => ({ ...prev, files: newFiles }));
+        //               }}
+        //               placeholder="File Title"
+        //             />
+        //             <span>{file.file.name}</span>
+        //             <Button
+        //               variant="secondary"
+        //               onClick={() => {
+        //                 const newFiles = formData.files.filter((_, i) => i !== index);
+        //                 setFormData(prev => ({ ...prev, files: newFiles }));
+        //               }}
+        //             >
+        //               Remove
+        //             </Button>
+        //           </div>
+        //         ))}
+        //         <Input
+        //           type="file"
+        //           accept=".pdf"
+        //           onChange={(e) => {
+        //             const file = e.target.files?.[0];
+        //             if (file) {
+        //               setFormData(prev => ({
+        //                 ...prev,
+        //                 files: [...prev.files, { name: '', file }]
+        //               }));
+        //             }
+        //           }}
+        //         />
+        //       </div>
+        //     </div>
+        //   )
+        // },
         {
           title: "Review",
-          content: ({ formData }: { formData: FormData }) => (
+          content: ({ formData }: { formData: IDocumentData }) => (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Review your document</h3>
               <p>Please review the information you've entered:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Document Name: {formData.title}</li>
-                <li>Organization Name: {formData.additionalOrg}</li>
+                <li>Organization Name: {formData.additional}</li>
                 <li>Category: {formData.categoryId}</li>
                 <li>Requirements: {formData.requirements.length}</li>
-                <li>Observations: {formData.additionalContent ? "Provided" : "Not provided"}</li>
+                <li>Observations: {formData.content ? "Provided" : "Not provided"}</li>
                 <li>Logo: {formData.logo ? "Custom logo uploaded" : "Using default logo"}</li>
-                <li>PDF Files: {formData.files.length} uploaded</li>
+                <li>PDF Files: {formData.pdf ? "Uploaded" : "Not Uploaded"}</li>
               </ul>
               <p>If everything looks correct, click 'Finish' to submit your document.</p>
             </div>
           )
         },
       ]
+  const userData = useSession()
+  if(userData.status === "loading") return <div>Waiting</div>
+  const userId = userData.data?.user.id
+  if(!userId) return <div>Not authed</div>
   const [progress, setProgress] = React.useState(25)
   const [currentPhase, setCurrentPhase] = React.useState(0)
   const [errors, setErrors] = React.useState<string[]>([])
-  const [formData, setFormData] = React.useState<FormData>({
+  const [formData, setFormData] = React.useState<IDocumentData>({
+    content: "",
+    userId, 
     title: "",
-    additionalOrg: "",
+    additional: "",
     categoryId: "",
     description: "",
-    imageUrl: DEFAULT_LOGO_URL,
-    requirements: [''],
-    additionalContent: "",
+    requirements: [],
     logo: null,
-    files: []
+    pdf: null
   })
 
   const validateForm = () => {
     const newErrors: string[] = [];
     if (currentPhase === 0) {
       if (!formData.title) newErrors.push("Document name is required");
-      if (!formData.additionalOrg) newErrors.push("Organization name is required");
+      if (!formData.additional) newErrors.push("Organization name is required");
       if (!formData.categoryId) newErrors.push("Category is required");
     } else if (currentPhase === 1) {
       if (formData.requirements.length === 0 || !formData.requirements[0]) {
@@ -280,44 +341,37 @@ function DocsCreate({categories}: catInterface) {
         setProgress(prev => Math.min(100, prev + 100 / phases.length))
       } else {
         console.log("Form submitted:", formData)
-        const dataToSend = new FormData()
-        dataToSend.append("title", formData.title);
-        dataToSend.append("additionalOrg", formData.additionalOrg);
-        dataToSend.append("categoryId", formData.categoryId);
-        dataToSend.append("description", formData.description);
-        dataToSend.append("imageUrl", formData.imageUrl);
-        formData.requirements.forEach((req) => {
-          dataToSend.append("requirements", req);
-        });
-        dataToSend.append("additionalContent", formData.additionalContent);
-        if (formData.logo) {
-          dataToSend.append("logo", formData.logo);
+        const dataToSend = {
+          
         }
-        formData.files.forEach((file) => {
-          dataToSend.append("files", file.file);
-        });
+        // const dataToSend = new FormData()
+        // dataToSend.append("title", formData.title);
+        // dataToSend.append("additional", formData.additionalOrg);
+        // dataToSend.append("categoryId", formData.categoryId);
+        // dataToSend.append("description", formData.description);
+        // dataToSend.append("imageUrl", formData.imageUrl);
+        // formData.requirements.forEach((req) => {
+        //   dataToSend.append("requirements", req);
+        // });
+        // dataToSend.append("additionalContent", formData.additionalContent);
+        // if (formData.logo) {
+        //   dataToSend.append("logo", formData.logo);
+        // }
+        // formData.files.forEach((file) => {
+        //   dataToSend.append("files", file.file);
+        // });
         try {
-          const response = await fetch("/api/docForm", {
-            method: "POST",
-            body: dataToSend
+          // const response = await fetch("/api/docForm", {
+          //   method: "POST",
+          //   body: dataToSend
+          // })
+          manager.addDocumentPending(formData, {
+            userId,
           })
         } catch (e) {
           console.error(e)
         }
         redirect('/categories')
-        setCurrentPhase(0)
-        setProgress(25)
-        setFormData({
-          title: "",
-          additionalOrg: "",
-          categoryId: "",
-          description: "",
-          imageUrl: DEFAULT_LOGO_URL,
-          requirements: [''],
-          additionalContent: "",
-          logo: null,
-          files: []
-        })
       }
     }
   }
@@ -378,7 +432,7 @@ function DocsCreate({categories}: catInterface) {
                 <div className="mr-1"></div>
                 <p className="block mb-1 text-gray-400">Organization Name:</p>
                 <div className="mr-14 ml-2"></div>
-                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.additionalOrg}</p>
+                <p className="break-words bg-mygrey text-black font-semibold p-2 rounded-sm">{formData.additional}</p>
               </div>
               <div className="flex flex-row ml-20">
                 <p className="block mb-1 text-gray-400">Description:</p>
@@ -404,11 +458,12 @@ function DocsCreate({categories}: catInterface) {
                 <p className="block mb-1 text-gray-400">Logo:</p>
                 <div className="mr-32 ml-9"></div>
                 <div className="h-40 w-60 bg-mygrey rounded-sm flex items-center justify-center">
-                  <img
+                  {/* <img
                     src={formData.imageUrl}
                     alt="Logo"
                     className="h-32 w-32 object-cover rounded-full"
-                  />
+                  /> */}
+                  <ImageUploader file={formData.logo}/>
                 </div>
               </div>
               <div className="flex flex-row ml-14">
@@ -421,7 +476,7 @@ function DocsCreate({categories}: catInterface) {
                 <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
                   <ul className="list-decimal list-inside">
                     {formData.requirements.map((req, index) => (
-                      <li key={index} className="text-black break-words">{req}</li>
+                      <li key={index} className="text-black break-words">{req.title}</li>
                     ))}
                   </ul>
                 </div>
@@ -434,7 +489,7 @@ function DocsCreate({categories}: catInterface) {
                 <p className="block mb-1 text-gray-400">Observations:</p>
                 <div className="mr-24 ml-3"></div>
                 <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
-                  <p className="whitespace-pre-wrap text-black break-words">{formData.additionalContent}</p>
+                  <p className="whitespace-pre-wrap text-black break-words">{formData.content}</p>
                 </div>
               </div>
               <div className="flex flex-row ml-14">
@@ -446,9 +501,12 @@ function DocsCreate({categories}: catInterface) {
                 <div className="mr-28 ml-5"></div>
                 <div className="w-80 p-4 border rounded-md overflow-auto border-gray-300">
                   <ul className="list-disc list-inside">
-                    {formData.files.map((file, index) => (
+                    <li className="text-black break-words">
+                      {formData.pdf?.name}
+                    </li>
+                    {/* {formData.files.map((file, index) => (
                       <li key={index} className="text-black break-words">{file.name || file.file.name}</li>
-                    ))}
+                    ))} */}
                   </ul>
                 </div>
               </div>
@@ -461,6 +519,33 @@ function DocsCreate({categories}: catInterface) {
     </div>
   )
 }
+interface ImageUploaderProps {
+  file: File | null; // Prop to accept the image file
+}
+const ImageUploader: React.FC<ImageUploaderProps> = ({ file }) => {
+  const [imageSrc, setImageSrc] = React.useState<string | null>(null);
 
+  React.useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageSrc(reader.result as string); // Set the image source as base64
+      };
+      reader.readAsDataURL(file); // Convert the file to a data URL
+    } else {
+      setImageSrc(null); // Clear the image if no file is provided
+    }
+  }, [file]); // Re-run the effect when the file changes
+
+  return (
+    <div>
+      {imageSrc ? (
+        <img src={imageSrc} alt="Uploaded" style={{ maxWidth: "100%" }} />
+      ) : (
+        <p>No image to display</p>
+      )}
+    </div>
+  );
+};
 export default DocsCreate
 

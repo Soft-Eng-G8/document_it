@@ -35,6 +35,7 @@ model User {
 
   reviews           Contribution[] @relation("ContributionReviewer")
 
+  badges Badge[]
 }
 
 model Account {
@@ -55,14 +56,17 @@ model Account {
 }
 
 model Category {
-  id                Int             @id @default(autoincrement())
+  id                String          @id @default(cuid())
   title             String
   description       String
   imageUrl          String?
   categories        Category[]      @relation("CategoryToCategory")
   Documents         Document[]
   categoryParent    Category?       @relation("CategoryToCategory", fields: [categoryId], references: [id])
-  categoryId        Int?
+  categoryId        String?
+
+  oldContributions  Contribution[] @relation(name: "oldCategoryToContribution")
+  newContributions  Contribution[] @relation(name: "newCategoryToContribution")
 }
 
 model Document {
@@ -73,29 +77,32 @@ model Document {
   additional        String?
   imageUrl          String?
   pdfUrl            String?
-  status            String          @default("Unverified") // Verified
   updatedAt         DateTime        @updatedAt
   createdAt         DateTime        @default(now())
+  categoryId        String
   category          Category        @relation(fields: [categoryId], references: [id])
   requirements      Requirement[]
-  categoryId        Int
   userId            String
   addedBy           User            @relation(fields: [userId], references: [id])
 
   contributions     Contribution[]
 }
 
-model Requirement{
-  id                Int             @id @default(autoincrement())
+model Requirement {
+  id                String          @id @default(cuid())
   title             String
   description       String
-  status            String
-  type              String
   updatedAt         DateTime        @updatedAt
   createdAt         DateTime        @default(now())
   
-  Document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  documentId        String
+  documentId        String?
+  document          Document?       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  oldContributionId String?
+  oldContribution   Contribution?   @relation(name: "ContributionToOldRequirement", fields: [oldContributionId], references: [id], onDelete: Cascade)
+
+  newContributionId String?
+  newContribution   Contribution?   @relation(name: "ContributionToNewRequirement", fields: [newContributionId], references: [id], onDelete: Cascade)
 }
 
 
@@ -104,10 +111,10 @@ model Contribution {
   userId            String
   user              User            @relation("ContributionUser", fields: [userId], references: [id], onDelete: Cascade)
   reviewerId        String?
-  reviewer          User?            @relation("ContributionReviewer", fields: [reviewerId], references: [id])
+  reviewer          User?           @relation("ContributionReviewer", fields: [reviewerId], references: [id])
 
-  documentId        String
-  document          Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId        String?
+  document          Document?       @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   status            String          @default("Pending") // Accepted, Rejected
   type              String          @default("NEW") // EDIT
@@ -126,6 +133,13 @@ model Contribution {
   newImageURL       String?
   oldPdfURL         String?
   newPdfURL         String?
+  oldCategoryId     String?
+  oldCategory       Category?       @relation(name: "oldCategoryToContribution", fields: [oldCategoryId], references: [id])
+  newCategoryid     String?
+  newCategory       Category?       @relation(name: "newCategoryToContribution", fields: [newCategoryid], references: [id])
+
+  oldRequirements   Requirement[]   @relation(name: "ContributionToOldRequirement")
+  newRequirements   Requirement[]   @relation(name: "ContributionToNewRequirement")
 }
 
 model Permission {
@@ -136,51 +150,11 @@ model Permission {
   Role Role[]
 }
 
-// model TitleChange {
-//   id                String          @id @default(cuid())
-//   oldTitle          String
-//   newTitle          String
+model Badge {
+  id                String          @id @default(cuid())
+  name              String
+  description       String          @default("")
+  image             String
 
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
-
-// model DescriptionChange {
-//   id                String          @id @default(cuid())
-//   oldDescription    String
-//   newDescription    String
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
-
-// model ContentChange {
-//   id                String          @id @default(cuid())
-//   oldContent        String
-//   newContent        String
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
-
-// model AdditionalChange {
-//   id                String          @id @default(cuid())
-//   oldAdditional     String
-//   newAdditional     String
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
-
-// model ImageURLChange {
-//   id                String          @id @default(cuid())
-//   oldImageURL       String
-//   newImageURL       String
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
-
-// model PdfURLChange {
-//   id                String          @id @default(cuid())
-//   oldPdfURL         String
-//   newPdfURL         String
-//   contributionID    String          @unique
-//   contribution      Contribution    @relation(fields: [contributionID], references: [id], onDelete: Cascade)
-// }
+  users             User[]
+}

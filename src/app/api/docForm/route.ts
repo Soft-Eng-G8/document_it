@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { pinata } from '@/app/utils/config';
+import { IDocument, verifyToken } from '@/scripts/util';
 
 const formDataSchema = z.object({
     title: z.string(),
@@ -16,6 +17,9 @@ const formDataSchema = z.object({
 type FormData = z.infer<typeof formDataSchema>;
 
 export async function POST(request: NextRequest) {
+    const { decodedToken, error } = await verifyToken(request)
+    if(error) return new Response(error, {status: 403})
+    
     try {
         const data = await request.formData();
         const origin = await request.headers.get('origin');
@@ -65,8 +69,9 @@ export async function POST(request: NextRequest) {
             content: formData.additionalContent,
             additional: formData.additionalOrg,
             imageUrl: logoUrl,
+            
             pdfUrl: pdfUrl,
-            addedBy: 'cm4mvzbo80000o508rtgb0x9s', // Replace with actual user ID
+            userId: 'cm4mvzbo80000o508rtgb0x9s', // Replace with actual user ID
             requirements: formData.requirements.map((req) => ({
                 title: req,
                 description: req,
