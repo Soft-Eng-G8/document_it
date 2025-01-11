@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         // const { title, description, categoryId, content, additional, imageUrl, userId, requirements, pdfUrl } = myobj;
         // createDocumentSchema.parse(data);
         // const data = structuredClone(myobj)
-
+        console.log(data)
         const contribution = await manager.addDocumentPending(data, {
             userId: myobj.get('userId') as string,
         })
