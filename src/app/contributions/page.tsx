@@ -3,10 +3,20 @@ import { ChevronRight, FileCheck2 } from "lucide-react"
 import Image from "next/image"
 import ContributionView from "./contView"
 import prisma from "@/lib/db"
+import { getSession } from "next-auth/react"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
 
 
 const Contributions = async() => {
+  const session = await getServerSession()
+  
+  if (!session) {
+    return redirect('/login')
+  }
+  console.log(session)
+
 
   // const contributions = [
   //   {
@@ -39,8 +49,12 @@ const Contributions = async() => {
   //       date: "2024-12-25",
   //       status: "Pending" as "Pending",
   //   },]
-  const contributions = await prisma.contribution.findMany({include: {
-    user: true
+  const contributions = await prisma.contribution.findMany({
+    // where: {
+      // userId
+    // }
+    include: {
+      user: true
   }})
   
   return (

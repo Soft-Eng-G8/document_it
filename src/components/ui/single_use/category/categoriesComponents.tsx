@@ -15,7 +15,7 @@ interface Category {
 }
 
 
-export default async function CategoryComponents({ documents, category}:  {documents: any, category: any }) {
+export default function CategoryComponents({ documents, category}:  {documents: any, category: any }) {
 
     
   const router = useRouter();
