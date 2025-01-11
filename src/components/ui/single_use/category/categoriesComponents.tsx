@@ -22,11 +22,10 @@ export default  function CategoryComponents({ documents, category}:  {documents:
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       <main className="flex flex-row ml-20 space-y-6 mt-8 justify-between w-auto">
        <div className='flex flex-col gap-6 w-full'>
       {documents.map((doc: { id: string; title: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; description: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined }, index: Key | null | undefined) => (
-          <button onClick={() => router.push(`/doc_display/${doc.id}`)}>
+          <button onClick={() => router.push(`/doc_display/${doc.id}`)} key={doc.id}>
             <div 
             key={index} 
             className="bg-mywhite p-6 flex items-start gap-6 hover:shadow-lg transition-shadow rounded-lg hover:cursor-pointer"

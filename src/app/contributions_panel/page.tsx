@@ -10,7 +10,6 @@ async function ContributionsComponent() {
 
     <SideNavBar/>
     <div className="flex-1">
-      <Header />
       <div className='flex flex-col mx-4 mt-2'>
       <ContributionsPanel/>
       <RecentContributions/>
