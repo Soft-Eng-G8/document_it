@@ -10,10 +10,14 @@ import {
 } from "lucide-react";
 import UserItem from "./user_item";
 import { useRouter } from 'next/navigation'
+import { getSession, signOut, useSession } from "next-auth/react";
 
 
 function SideNavBar() {
-    const router = useRouter();
+  const session = useSession()
+  if(session.status === "loading") return <div>Waiting</div>
+  console.log(session )
+  const router = useRouter();
   const menuList = [
     {
       group: "Dashboard",
@@ -26,8 +30,7 @@ function SideNavBar() {
     {
       group: "Menu",
       items: [
-        { id: "settings", text: "Settings", icon: <Settings /> , link: '/settings_panel'},
-        { id: "logout", text: "Logout", icon: <LogOut />, link: '/overview' },
+        { id: "logout", text: "Logout", icon: <LogOut />, link: '/' },
       ],
     },
   ];
@@ -45,13 +48,22 @@ function SideNavBar() {
             </h3>
             <ul className="mt-2 space-y-2">
               {menu.items.map((item) => ( 
-                <li key={item.id}>
+                <li key={item.id}
+                onClick={() => {
+                        if(item.text === "Logout")
+                          signOut({
+                        callbackUrl: '/',
+                      redirect: true})
+                      }}
+                >
                   <button 
                     onClick={() => router.push(item.link)}
                     className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-200 text-gray-700 w-full text-left"
                   >
                     <span className="w-5 h-5">{item.icon}</span>
-                    <span className="text-sm font-medium">{item.text}</span>
+                    <span className="text-sm font-medium"
+                      
+                    >{item.text}</span>
                   </button>
                 </li>
               ))}
