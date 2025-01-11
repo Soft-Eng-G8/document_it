@@ -2,17 +2,17 @@ import CategoryComponents from '@/components/ui/single_use/category/categoriesCo
 import prisma from '@/lib/db';
 
 
-export default async function category({params}: { params: { id: number } }) {
+export default async function category({params}: { params: { id: string } }) {
 
   const category = await prisma.category.findFirst({
           where: {
-            id: parseInt(params.id.toString(), 10)
+            id: params.id.toString()
           }
         });
   
       const documents = await prisma.document.findMany({
           where: {
-            categoryId: parseInt(params.id.toString(), 10)
+            categoryId: params.id.toString()
           }
         });
   return (
