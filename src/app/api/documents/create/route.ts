@@ -1,8 +1,12 @@
+import manager, { IDocumentData } from '@/app/manager';
 import prisma from '@/lib/db'
 import { Prisma } from '@prisma/client';
+import { decode } from 'next-auth/jwt';
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod';
+import { JWT_SECRET } from '../../config';
 
 // a testing json
 /* 
@@ -49,10 +53,10 @@ interface Requirements {
 const createDocumentSchema = z.object({
     title: z.string(),
     description: z.string(),
-    categoryId: z.number(),
+    categoryId: z.string(),
     content: z.string().nullable(),
     additional: z.string().nullable(),
-    imageUrl: z.string().nullable(),
+    image: z.string().nullable(),
     pdfUrl: z.string().nullable(),
     userId: z.string(),
     requirements: z.array(z.object({
@@ -67,10 +71,35 @@ type CreateDocumentRequestBody = z.infer<typeof createDocumentSchema>;
 
 export async function POST(request: NextRequest) {
     try {
-        const myobj = await request.json() as CreateDocumentRequestBody;
-        const { title, description, categoryId, content, additional, imageUrl, userId, requirements, pdfUrl } = myobj;
-        createDocumentSchema.parse(myobj);
+        const token = (await cookies()).get('next-auth.session-token')
+        // const { decodedToken, error } = manager.
+        const decodedToken = await decode({
+            token: token!.value,
+            secret: JWT_SECRET!
+            
+        })
+        const myobj = await request.formData();
+        const data: IDocumentData = {
+            title: myobj.get('title') as string,
+            description: myobj.get("description") as string,
+            content: myobj.get("content") as string,
+            additional: myobj.get("additional") as string,
+            categoryId: myobj.get("categoryId") as string,
+            requirements: JSON.parse(myobj.get('requirements') as string),
+            userId: myobj.get('userId') as string,
+            logo: myobj.get("logo") as File,
+            pdf: myobj.get("pdf") as File
+        }
+        // const { title, description, categoryId, content, additional, imageUrl, userId, requirements, pdfUrl } = myobj;
+        // createDocumentSchema.parse(data);
+        // const data = structuredClone(myobj)
+
+        const contribution = await manager.addDocumentPending(data, {
+            userId: myobj.get('userId') as string,
+        })
+        console.log("bazingen", contribution)
         
+        // const contribution = manager.addDocumentPending(data, options)
         // const doc = await prisma.document.create({
         //     data: {
         //         title,
@@ -85,40 +114,18 @@ export async function POST(request: NextRequest) {
         // });
         // for (const req of requirements) {
         //     await prisma.requirement.create({
-        //         data: {
+        //  
         //             title: req.title,
         //             description: req.description,
         //             documentId: doc.id,
         //         },
         //     });
         // }
-        revalidatePath("/documents");
+        
+        
         return NextResponse.json("Document created  successfully", { status: 200 });
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            //console.error('Validation error:', error.errors);
-            return NextResponse.json({ error: 'Validation error', details: error.errors }, { status: 400 });
-        } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            //console.error('Prisma known request error:', error);
-            return NextResponse.json({ error: 'Known request error occurred', 
-                details: error.message
-            }, { status: 400 });
-        } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
-            //console.error('Prisma unknown request error:', error);
-            return NextResponse.json({ error: 'Unknown request error occurred'}, { status: 500 });
-        } else if (error instanceof Prisma.PrismaClientRustPanicError) {
-            //console.error('Prisma Rust panic error:', error);
-            return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-        } else if (error instanceof Prisma.PrismaClientInitializationError) {
-            //console.error('Prisma initialization error:', error);
-            return NextResponse.json({ error: 'Initialization error occurred' }, { status: 500 });
-        } else if (error instanceof Prisma.PrismaClientValidationError) {
-            //console.error('Prisma validation error:', error);
-            return NextResponse.json({ error: 'Validation error occurred',details: error.message}, { status: 400 });
-        } else {
-            //console.error('Unexpected error:', error);
-            return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 });
-        }
+        return NextResponse.json(error, { status: 400 });
     }
 }
 
