@@ -1,4 +1,6 @@
-import { Lock } from 'lucide-react';
+import { Lock, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/multiple_uses/button';
 
 
 export default function Unauthorized() {
@@ -11,6 +13,12 @@ export default function Unauthorized() {
                     You do not have the necessary permissions to access this resource. Please contact your administrator for
                     assistance.
                 </p>
+                <Link href="/">
+                    <Button >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Go back to Home
+                    </Button>
+                </Link>
             </div>
         </div>
     )
