@@ -83,14 +83,8 @@ export default function ContributionsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <img
-                  src={contribution.author.avatar}
-                  alt={contribution.author.name}
-                  className="h-8 w-8 rounded-full"
-                />
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {contribution.author.name}
-                </span>
+                <div className="text-green-400 font-bold hover:cursor-pointer">Accept</div>
+                <div className="text-red-400 font-bold  hover:cursor-pointer">Reject</div>
               </div>
             </div>
             <p className="mt-3 text-neutral-600 dark:text-neutral-300">
