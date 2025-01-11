@@ -21,7 +21,7 @@ export function ClientRefs({ numberOfDocuments, numOfContributions, categories }
 
   return (
     <>
-      <HomeTop numberOfDocuments={numberOfDocuments} targetRef={categoriesRef} />
+{      <HomeTop numberOfDocuments={numberOfDocuments} targetRef={categoriesRef} />}
       
       <div className='h-[70px]' />
       

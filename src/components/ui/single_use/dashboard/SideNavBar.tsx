@@ -27,7 +27,7 @@ function SideNavBar() {
     {
       group: "Menu",
       items: [
-        { id: "settings", text: "Settings", icon: <Settings /> , link: '/overview'},
+        { id: "settings", text: "Settings", icon: <Settings /> , link: '/settings'},
         { id: "logout", text: "Logout", icon: <LogOut />, link: '/overview' },
       ],
     },
