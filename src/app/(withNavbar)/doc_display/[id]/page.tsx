@@ -34,7 +34,6 @@ const document = await prisma.document.findFirst({
 
   return (
     <div className="h-screen overflow-y-auto bg-mygrey">
-        <Header/>
       <div className="sticky top-0 w-full z-50  p-4">
         <div className="flex justify-center">
           <div></div>

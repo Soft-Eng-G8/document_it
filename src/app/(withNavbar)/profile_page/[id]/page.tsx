@@ -49,7 +49,6 @@ async function ProfilePage({params}: { params: { id: string } })  {
   
   return (
     <div  >
-      <Header/>
         <div className='flex flex-row'>
           <div className='scale-[0.9]'>
             <div className='flex justify-start  mt-10 ml-20 items-center'>

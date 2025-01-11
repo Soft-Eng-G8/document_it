@@ -18,7 +18,6 @@ export default async function category({params}: { params: { id: string } }) {
         });
   return (
     <div>
-      <Header/>
     <CategoryComponents documents={documents} category={category} />
     </div>
   )

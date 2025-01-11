@@ -77,7 +77,6 @@ export default function SettingsPage() {
   return (<div className="flex items-start min-h-screen">
     <SideNavBar  />
     <div className="flex-1">
-      <Header />
       <div className="container mx-auto p-6">
       <div className="flex items-center gap-2 mb-6">
         <Cog className="h-6 w-6 text-black" />

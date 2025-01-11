@@ -9,7 +9,11 @@ export default async () => {
   const categories_data = await prisma.category.findMany()
   const categories_without_docs = structureCategories(categories_data)
 
-  const document_data = await prisma.document.findMany()
+  const document_data = await prisma.document.findMany({
+    include: {
+      requirements: true
+    }
+  })
   const categories = structureDocuments(document_data, categories_without_docs)
 
   return (

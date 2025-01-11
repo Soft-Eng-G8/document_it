@@ -33,7 +33,6 @@ function ProfilePage() {
   
   return (
     <div  >
-      <Header/>
         <div className='flex flex-row'>
           <div>
             <div className='flex justify-start  mt-10 ml-20 items-center'>

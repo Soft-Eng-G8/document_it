@@ -16,7 +16,6 @@ function DashboardView() {
     <div className="flex items-start min-h-screen">
       <SideNavBar/>
       <div className="flex-1">
-        <Header />
         
       </div>
     </div>
