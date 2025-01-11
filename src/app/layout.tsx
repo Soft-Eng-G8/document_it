@@ -8,7 +8,7 @@ const refetchInterval = 15 * 24 * 60 * 60
 
 
 export default ({children}: {children: React.ReactNode}) => (
-  <html>
+  <html suppressHydrationWarning>
     <body>
       <SessionProvider>
         {children}

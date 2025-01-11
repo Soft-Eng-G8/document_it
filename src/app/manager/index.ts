@@ -181,9 +181,7 @@ class DBManager {
           newRequirements: {
             create: doc.requirements.map(req => ({
               ...req,
-              newContribution: {
-                connect: { id: contribution_empty.id }
-              }
+    
             }))
           }
         }
@@ -194,10 +192,65 @@ class DBManager {
       }
       return contribution
     } catch (error) {
+      console.error(error)
+      return error
+    }
+  }
+
+  public async editDocument(documentId: string, doc: IDocumentData, options: IDocumentOptions) {
+    let logoUrl: string | null = null
+    if(doc.logo) {
+      const logoUploadData = await pinata.upload.file(doc.logo)
+      logoUrl = await pinata.gateways.createSignedURL({
+        cid: logoUploadData.cid,
+        expires: 3600 * 24 * 365
+      })
+    }
+    let pdfUrl: string | null = null
+    if(doc.pdf) {
+      const fileUploadData = await pinata.upload.file(doc.pdf)
+      pdfUrl = await pinata.gateways.createSignedURL({
+        cid: fileUploadData.cid,
+        expires: 3600 * 24 * 365
+      })
+    }
+    try {
+        const oldDoc = await prisma.document.findUnique({
+          where: { id: documentId }
+        })
+        if(!oldDoc) throw new Error("Cant find Document to edit")
+        const contribution = await prisma.contribution.create({
+        data: {
+          oldTitle: oldDoc.title,
+          newTitle: doc.title,
+          oldDescription: oldDoc.description,
+          newDescription: doc.description,
+          oldContent: oldDoc.content,
+          newContent: doc.content,
+          oldAdditional: oldDoc.additional,
+          newAdditional: doc.additional,
+          oldCategory: {
+            connect: { id: oldDoc.categoryId }
+          },
+          newCategory: {
+            connect: { id: doc.categoryId }
+          },
+          oldImageURL: oldDoc.imageUrl,
+          newImageURL: logoUrl,
+          oldPdfURL: oldDoc.pdfUrl,
+          newPdfURL: pdfUrl,
+          user: {
+            connect: { id: options.userId }
+          },
+          
+          status: "PENDING"
+        }
+      })
+      if(options.bypass) 
+        return this.verifyContribution(contribution.id, "APPROVED")
+    } catch (error) {
       
     }
-
-
   }
 
 
@@ -219,7 +272,7 @@ class DBManager {
     try {
       const contribution = await prisma.contribution.update({
         where: { id: contributionId },
-        data: { status },
+        data: { status, verifiedAt: new Date( ) },
         include: { newRequirements: true, oldRequirements: true, newCategory: true, oldCategory: true }
       })
       const applyChanges = status === "APPROVED"
