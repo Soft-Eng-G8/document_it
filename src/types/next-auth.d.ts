@@ -4,6 +4,7 @@ import { User as PrismaUser } from "@prisma/client";
 // extending to add roles
 //? This stuff is for the providers to recognize roles. Its a mess am not 100% sure I understand but it fixes it so hey
 
+
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -23,11 +24,27 @@ declare module 'next-auth' {
     permissions: {
         id: string, name: string
       }[]
+
   }
 
   interface User extends PrismaUser {
-    roles: {
-      id: string, name: string
+    id: string
+    permissions: {
+      id: string
+      name: string
     }[]
+  }
+}
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      permissions: {
+        id: string
+        name: string
+      }[]
+    };
   }
 }

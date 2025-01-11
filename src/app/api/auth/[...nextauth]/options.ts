@@ -55,9 +55,11 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        const dbUser = await prisma.user.findUnique({where: { id: user.id }, include: { roles: { include: { permissions: true } } }})
         token.id = user.id
         token.name = user.name,
-        token.email = user.email
+        token.email = user.email!
+        token.permissions = getPermsFromRole(dbUser!.roles)
       }
       return token
     },
@@ -75,9 +77,9 @@ export const options: NextAuthOptions = {
         if(dbUser) {
           session.user = {
             id: dbUser.id,
+
             name: dbUser.name,
             email: dbUser.email || '',
-            // roles: dbUser.roles.map((role) => ({ id: role.id, name: role.name })),
             permissions: getPermsFromRole(dbUser.roles)
           };
         }

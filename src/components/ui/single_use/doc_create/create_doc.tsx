@@ -21,7 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/multiple_us
 import prisma from "@/lib/db"
 import { ICategory } from "@/scripts/util"
 import { redirect } from "next/navigation"
-import manager, { IDocumentData } from "@/app/manager"
+import { IDocumentData } from "@/app/manager"
 import { useSession } from "next-auth/react"
 
 interface FormData {
@@ -44,7 +44,32 @@ interface catInterface  {
 }
 
 function DocsCreate({categories}: catInterface) {
-  // const { decodedToken, error }
+  const userData = useSession()
+
+  const [progress, setProgress] = React.useState(25)
+  const [currentPhase, setCurrentPhase] = React.useState(0)
+  const [errors, setErrors] = React.useState<string[]>([])
+  const [formData, setFormData] = React.useState<IDocumentData>({
+    content: "",
+    userId: "", 
+    title: "",
+    additional: "",
+    categoryId: "",
+    description: "",
+    requirements: [],
+    logo: null,
+    pdf: null
+  })
+  const userId = userData.data?.user.id
+  React.useEffect(() => {
+    setFormData({
+    ...formData,
+      userId: userId || ''
+    })
+  }, [])
+  if(userData.status === "loading") return <div>Waiting</div>
+  if(!userId) return <div>Not authed</div>;
+
 
     const phases = [
         {
@@ -61,7 +86,7 @@ function DocsCreate({categories}: catInterface) {
               <Input 
                 placeholder="Organization Name" 
                 value={formData.additional}
-                onChange={(e) => setFormData(prev => ({ ...prev, additionalOrg: e.target.value }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, additional: e.target.value }))}
                 required
               />
               <Textarea 
@@ -78,12 +103,15 @@ function DocsCreate({categories}: catInterface) {
                   <DropdownMenuContent className="w-56">
                     <DropdownMenuLabel>Select Category</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuRadioGroup 
+                    <DropdownMenuRadioGroup
+                      
                       value={formData.categoryId}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}
+                      onValueChange={(value) => {
+                        if(value != formData.categoryId) 
+                        setFormData(prev => ({ ...prev, categoryId: value }))}}
                     >
                                   {
-                      categories.map(cat => <DropdownMenuRadioItem value={cat.title}>{cat.title}</DropdownMenuRadioItem>)
+                      categories.map(cat => <DropdownMenuRadioItem value={cat.id} key={cat.id}>{cat.title}</DropdownMenuRadioItem>)
                       }
                       
                     </DropdownMenuRadioGroup>
@@ -146,8 +174,8 @@ function DocsCreate({categories}: catInterface) {
                 <Label htmlFor="observations">Observations</Label>
                 <Textarea
                   id="observations"
-                  value={formData.additional}
-                  onChange={(e) => setFormData(prev => ({ ...prev, additionalContent: e.target.value }))}
+                  value={formData.content}
+                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                   placeholder="Enter your observations"
                   className="min-h-[100px]"
                 />
@@ -300,24 +328,7 @@ function DocsCreate({categories}: catInterface) {
           )
         },
       ]
-  const userData = useSession()
-  if(userData.status === "loading") return <div>Waiting</div>
-  const userId = userData.data?.user.id
-  if(!userId) return <div>Not authed</div>
-  const [progress, setProgress] = React.useState(25)
-  const [currentPhase, setCurrentPhase] = React.useState(0)
-  const [errors, setErrors] = React.useState<string[]>([])
-  const [formData, setFormData] = React.useState<IDocumentData>({
-    content: "",
-    userId, 
-    title: "",
-    additional: "",
-    categoryId: "",
-    description: "",
-    requirements: [],
-    logo: null,
-    pdf: null
-  })
+
 
   const validateForm = () => {
     const newErrors: string[] = [];
@@ -341,18 +352,23 @@ function DocsCreate({categories}: catInterface) {
         setProgress(prev => Math.min(100, prev + 100 / phases.length))
       } else {
         console.log("Form submitted:", formData)
-        const dataToSend = {
+        // const dataToSend = {
           
-        }
-        // const dataToSend = new FormData()
-        // dataToSend.append("title", formData.title);
-        // dataToSend.append("additional", formData.additionalOrg);
-        // dataToSend.append("categoryId", formData.categoryId);
-        // dataToSend.append("description", formData.description);
-        // dataToSend.append("imageUrl", formData.imageUrl);
+        // }
+        const dataToSend = new FormData()
+        dataToSend.append("title", formData.title);
+        dataToSend.append("description", formData.description);
+        dataToSend.append("content", formData.content)
+        dataToSend.append("additional", formData.additional);
+        dataToSend.append("categoryId", formData.categoryId!);
+        dataToSend.append('requirements', JSON.stringify(formData.requirements))
+        dataToSend.append('userId', userId as string)
         // formData.requirements.forEach((req) => {
         //   dataToSend.append("requirements", req);
         // });
+        dataToSend.append("logo", formData.logo as File);
+        dataToSend.append("pdf", formData.pdf as File);
+
         // dataToSend.append("additionalContent", formData.additionalContent);
         // if (formData.logo) {
         //   dataToSend.append("logo", formData.logo);
@@ -361,17 +377,22 @@ function DocsCreate({categories}: catInterface) {
         //   dataToSend.append("files", file.file);
         // });
         try {
-          const response = await fetch("/api/docForm", {
-            method: "POST",
-            // body: dataToSend
+          // const response = await fetch("/api/docForm", {
+          //   method: "POST",
+          //   body: dataToSend
+          // })
+          const response = await fetch('/api/documents/create', {
+            body: dataToSend,
+            method: 'POST'
           })
+          console.log(response)
           // manager.addDocumentPending(formData, {
-            // userId,
+          //   userId,
           // })
         } catch (e) {
           console.error(e)
         }
-        redirect('/categories')
+        // redirect('/categories')
       }
     }
   }
