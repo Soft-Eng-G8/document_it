@@ -7,6 +7,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { verify, hash } from 'argon2'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { getPermsFromRole } from "@/scripts/util";
+import { User } from "@prisma/client";
+import { permission } from "process";
 
 
 export const options: NextAuthOptions = {
@@ -31,14 +33,29 @@ export const options: NextAuthOptions = {
         
         const user = await prisma.user.findUnique({
           where: {name: username},
-          include: { roles: true }
-        })
+          include: { roles: {
+            include: {permissions: true}
+          } }
+        }) 
         if(!user) return null
 
         const isPasswordValid = await verify(user.hashedPassword, password)
         if(!isPasswordValid) return null
-        
-        return user
+        const permissions = getPermsFromRole(user.roles)
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          username: user.username,
+          hashedPassword: user.hashedPassword,
+          createdAt: user.createdAt,
+          accountId: user.accountId,
+          roles: user.roles.map((role) => ({
+            id: role.id,
+            name: role.name,
+          })),
+          permissions, // Add the flattened permissions at the top level
+        };
       },
     })
   ],
@@ -59,6 +76,7 @@ export const options: NextAuthOptions = {
         token.id = user.id
         token.name = user.name,
         token.email = user.email!
+        roles: user.roles,
         token.permissions = getPermsFromRole(dbUser!.roles)
       }
       return token
@@ -77,7 +95,7 @@ export const options: NextAuthOptions = {
         if(dbUser) {
           session.user = {
             id: dbUser.id,
-
+            roles: dbUser.roles,
             name: dbUser.name,
             email: dbUser.email || '',
             permissions: getPermsFromRole(dbUser.roles)

@@ -5,7 +5,7 @@ import prisma from '@/lib/db'
 import { Cog, Bell, Moon, User } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { options } from '../api/auth/[...nextauth]/options'
+import { options } from '../../api/auth/[...nextauth]/options'
 
 interface SettingsSection {
   id: string

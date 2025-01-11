@@ -1,13 +1,11 @@
-'use client'
 import React from 'react';
-import Login from '../../components/ui/single_use/login_form/Login';
-import { Navbar } from '@/components/ui/multiple_uses/navbar';
-import { useParams, useSearchParams } from 'next/navigation';
+import Login from '../../../components/ui/single_use/login_form/Login';
+// import { Navbar } from '@/components/ui/multiple_uses/navbar';
+// import { useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/ui/single_use/dashboard/header';
   //first thing is if you wanna return navbar
 function page() {
-  const params = useSearchParams()
-  const callbackUrl = params.get('callbackUrl') || '/'
+
   return (  
     <>
     <div className='flex flex-col bg-mygrey'>
@@ -20,7 +18,7 @@ function page() {
          <div 
       className="relative h-screen w-screen bg-cover bg-center flex items-center justify-center bg-mygrey">
         
-      <Login callbackUrl={callbackUrl}/>
+      <Login />
     </div>
     </div>
    
