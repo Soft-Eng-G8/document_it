@@ -71,7 +71,6 @@ async function DashboardItem() {
     <div className="flex items-start min-h-screen">
       <SideNavBar/>
       <div className="flex-1">
-        <Header />
         <div className=" p-4 grid grid-cols-[2fr_1fr] gap-4 bg-mygrey h-[300px]">
       <div className="border rounded-lg shadow-lg bg-mygrey p-4 flex flex-col gap-4">
         <div className="flex flex-row justify-around gap-6">

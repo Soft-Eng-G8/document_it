@@ -15,13 +15,15 @@ import {
 } from "@/components/ui/multiple_uses/resizable"
 import { signIn } from 'next-auth/react'
 import { SignUp } from './sign_up'
-import Header from '../dashboard/header'
+import { useSearchParams } from 'next/navigation';
 
 interface ILogin {
   callbackUrl: string
 }
 
-function Login(props: ILogin) {
+function Login(/* props: ILogin */) {
+    const params = useSearchParams()
+  const callbackUrl = params.get('callbackUrl') || '/'
   const username = useRef('')
   const password = useRef('')
   const [isLogin, setIsLogin] = useState(true)
@@ -31,7 +33,7 @@ function Login(props: ILogin) {
     const result = await signIn('credentials', {
       username: username.current,
       password: password.current,
-      callbackUrl: props.callbackUrl 
+      callbackUrl: callbackUrl 
     })
   }
 

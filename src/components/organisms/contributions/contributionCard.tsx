@@ -1,4 +1,4 @@
-import { ProperContribution } from "@/app/contributions/contView"
+import { ProperContribution } from "@/app/(withNavbar)/contributions/contView"
 import { FileCheck2, ChevronRight } from "lucide-react"
 import Image from "next/image"
 

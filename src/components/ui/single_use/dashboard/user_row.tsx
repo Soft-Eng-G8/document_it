@@ -7,7 +7,6 @@ interface UserProps {
   imageUrl?: string;
   email: string;
   roles: string[];
-  onRemove: (email: string) => void; // Add the onRemove prop
 }
 
 const roleColors: Record<string, string> = {
@@ -16,7 +15,7 @@ const roleColors: Record<string, string> = {
   viewer: "#000000",
 };
 
-const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles, onRemove }) => {
+const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles }) => {
   const [colorMap, setColorMap] = useState<Record<string, string>>({});
 
   const userColor = useMemo(() => {
@@ -54,7 +53,6 @@ const UserRow: React.FC<UserProps> = ({ title, imageUrl, email, roles, onRemove 
       </div>
       <Button
         className="bg-neutral-300 hover:bg-neutral-400 text-black font-semibold"
-        onClick={() => onRemove(email)} // Use the onRemove function
       >
         Remove
       </Button>
