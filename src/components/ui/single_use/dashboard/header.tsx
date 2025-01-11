@@ -13,7 +13,6 @@ export default function Header() {
   return (
     <header className="w-full border-b bg-white shadow-lg">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <img 
             src="/blueDocit.png" 
@@ -22,7 +21,6 @@ export default function Header() {
           />
         </Link>
 
-        {/* Navigation */}
         <nav className="flex items-center gap-6">
           <Link 
             href="/categories" 

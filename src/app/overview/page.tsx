@@ -60,7 +60,7 @@ async function DashboardItem() {
     where:{
       title: {
         not: {
-          in: ["Etat Civil", "Visa"], // Exclude both "Etat Civil" and "Visa"
+          in: ["Etat Civil", "Visa"],
         },
       }
     }

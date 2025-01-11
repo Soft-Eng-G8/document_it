@@ -59,7 +59,7 @@ const SearchInput = () => {
 
   return (
     <>
-      <Button className="my-2" onClick={() => setOpen(o => !o)}>
+      <Button className="my-2 bg-black hover:bg-black/80" onClick={() => setOpen(o => !o)}>
         Search
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
