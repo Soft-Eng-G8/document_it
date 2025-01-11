@@ -6,7 +6,7 @@ export default async function category({params}: { params: { id: string } }) {
 
   const category = await prisma.category.findFirst({
           where: {
-            id: params.id
+            id: params.id.toString()
           }
         });
   

@@ -60,7 +60,7 @@ const SearchInput = () => {
   return (
     <>
       <Button className="my-2" onClick={() => setOpen(o => !o)}>
-        cool button yes
+        Search
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
