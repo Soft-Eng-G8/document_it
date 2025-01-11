@@ -9,7 +9,6 @@ function page() {
   return (  
     <>
     <div className='flex flex-col bg-mygrey'>
-      <Header/>
         <div className="sticky top-0 w-full z-50  p-4">
                 <div className="flex justify-center">
                   <div></div>

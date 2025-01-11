@@ -7,13 +7,6 @@ import LogOutButton from './logoutButton'
 import { getServerSideProps } from 'next/dist/build/templates/pages'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 
-// Mock authentication state - replace with your actual auth logic
-// const isLoggedIn = false
-// const user = {
-//   name: "John Doe",
-//   image: "/placeholder.svg?height=32&width=32"
-// }
-
 export default async function Header() {
   const session = await getServerSession(options)
   console.log(session)
@@ -37,7 +30,9 @@ export default async function Header() {
             Categories
           </Link>
           
-          <Link 
+          {session && (
+            <>
+            <Link 
             href="/doc_create" 
             className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
@@ -51,15 +46,19 @@ export default async function Header() {
           >
             <Settings className="h-4 w-4" />
             Settings
-          </Link>
+          </Link></>
+          )}
 
-          <Link 
+
+          {session && session.user.permissions.find(perm => perm.name === 'admin:admin') && (
+            <Link 
             href="/overview" 
             className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             <Presentation className="h-4 w-4" />
             Dashboard
           </Link>
+          )}
 
           {/* Conditional rendering based on auth state */}
           {session ? (

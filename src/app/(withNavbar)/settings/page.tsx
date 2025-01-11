@@ -64,7 +64,6 @@ export default async function SettingsPage() {
 
   return (
     <div>
-        <Header />
         <div className="container mx-auto p-6">
         
         <div className="flex items-center gap-2 mb-6">

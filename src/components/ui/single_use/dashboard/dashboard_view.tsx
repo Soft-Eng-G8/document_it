@@ -2,9 +2,8 @@
 import React, { useState } from "react";
 import SideNavBar from "./SideNavBar";
 import Header from "./header";
-import AdminPanel from "@/app/admin_panel/page";
-import UsersDisplay from "@/app/(withNavbar)/otherUserDisplay/page";
-import ContributionsComponent from "@/app/contributions_panel/page";
+import UsersDisplay from "@/app/(adminPanel)/otherUserDisplay/page";
+import ContributionsComponent from "@/app/(adminPanel)/contributions_panel/page";
 import { useRouter } from 'next/navigation'
 
 function DashboardView() {
@@ -17,7 +16,6 @@ function DashboardView() {
     <div className="flex items-start min-h-screen">
       <SideNavBar/>
       <div className="flex-1">
-        <Header />
         
       </div>
     </div>

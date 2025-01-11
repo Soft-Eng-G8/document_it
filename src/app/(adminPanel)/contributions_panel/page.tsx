@@ -12,7 +12,7 @@ async function ContributionsComponent() {
     <div className="flex-1">
       <div className='flex flex-col mx-4 mt-2'>
       <ContributionsPanel/>
-      <RecentContributions/>
+      {/* <RecentContributions/> */}
     </div>
     </div>
   </div>

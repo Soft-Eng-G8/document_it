@@ -2,6 +2,7 @@
 import React from "react";
 import {
   BetweenHorizontalEnd,
+  Home,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -15,9 +16,9 @@ import { getSession, signOut, useSession } from "next-auth/react";
 
 function SideNavBar() {
   const session = useSession()
+  const router = useRouter();
   if(session.status === "loading") return <div>Waiting</div>
   console.log(session )
-  const router = useRouter();
   const menuList = [
     {
       group: "Dashboard",
@@ -31,6 +32,7 @@ function SideNavBar() {
       group: "Menu",
       items: [
         { id: "logout", text: "Logout", icon: <LogOut />, link: '/' },
+        { id: "go_home", text: "Return to Home Page", icon: <Home />, link: '/' },
       ],
     },
   ];

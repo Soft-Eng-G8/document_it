@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { Input } from "@/components/ui/multiple_uses/input"
 import { Button } from "@/components/ui/multiple_uses/button"
+import { signIn } from 'next-auth/react'
 
 interface SignUpProps {
   onToggle: () => void
@@ -15,8 +16,23 @@ export function SignUp({ onToggle }: SignUpProps) {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Handle sign up logic here
-  }
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username.current,
+        email: email.current,
+        password: password.current,
+        provider: 'credentials'
+      })
+    })
+    if(res.status === 200) {
+      const result = await signIn('credentials', {
+      username: username.current,
+      password: password.current,
+      callbackUrl: '/profile_page' 
+    })
+    }
+  } 
 
   return (
     <div className="flex flex-col h-[600px] p-6 text-secondary-foreground">

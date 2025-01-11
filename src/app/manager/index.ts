@@ -72,7 +72,7 @@ class DBManager {
     }
   }
 
-  public async addUser(username: string, password: string, provider: string) {
+  public async addUser(username: string, email: string, password: string, provider: string) {
     // Check if the user already exists
     const existingUser = await prisma.user.findUnique({ where: { name: username } })
     if (existingUser) {
@@ -90,6 +90,7 @@ class DBManager {
         data: {
           name: username,
           username,
+          email,
           hashedPassword,
           roles: {
             connect: { id: role!.id }
