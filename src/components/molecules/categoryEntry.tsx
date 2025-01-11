@@ -56,12 +56,12 @@ const ItemEntry = ({item, compact, type}: IItemEntry) => {
         transition-all duration-200
       `}>
       {type === 'category' ? (item as ICategory)?.categories?.map(item => (
-        <ItemEntry item={item} compact type={'category'}/>
+        <ItemEntry key={item.id} item={item} compact type={'category'}/>
       )) : ''}
        {
         // @ts-ignore
        item.documents?.length ? (item as ICategory)?.documents?.map(item => (
-        <ItemEntry item={item} compact type="document"/>
+        <ItemEntry key={item.id} item={item} compact type="document"/>
       )) : ''
       }
       </div>
