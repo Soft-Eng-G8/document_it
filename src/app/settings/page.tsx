@@ -34,12 +34,14 @@ export default async function SettingsPage() {
           label: 'Display Name',
           type: 'text',
           value: session.user.name || "John Doe"
+
         },
         {
           id: 'email',
           label: 'Email Address',
           type: 'email',
           value: session.user.email || "Saluso_greg@gmail.com"
+
         },
 
       ]

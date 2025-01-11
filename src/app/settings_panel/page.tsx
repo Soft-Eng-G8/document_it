@@ -26,13 +26,13 @@ export default function SettingsPage() {
           id: 'name',
           label: 'Display Name',
           type: 'text',
-          value: 'Sarah Chen'
+          value: 'Oukil Hamza'
         },
         {
           id: 'email',
           label: 'Email Address',
           type: 'email',
-          value: 'sarah@example.com'
+          value: 'oukil@example.com'
         },
         {
           id: 'role',
