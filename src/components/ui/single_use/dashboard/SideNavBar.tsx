@@ -21,13 +21,12 @@ function SideNavBar() {
         { id: "overview", text: "Overview", icon: <LayoutDashboard />, link: '/overview'},
         { id: "users", text: "Users", icon: <User />, link: '/otherUserDisplay' },
         { id: "contributions", text: "Contributions", icon: <BetweenHorizontalEnd />, link: '/contributions_panel'},
-        { id: "adminPanel", text: "Admin Panel", icon: <Shield />, link: '/admin_panel' },
       ],
     },
     {
       group: "Menu",
       items: [
-        { id: "settings", text: "Settings", icon: <Settings /> , link: '/settings'},
+        { id: "settings", text: "Settings", icon: <Settings /> , link: '/settings_panel'},
         { id: "logout", text: "Logout", icon: <LogOut />, link: '/overview' },
       ],
     },

@@ -48,6 +48,14 @@ export default function Header() {
             Settings
           </Link>
 
+          <Link 
+            href="/settings" 
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Link>
+
           {/* Conditional rendering based on auth state */}
           {isLoggedIn ? (
             <Avatar>
