@@ -2,6 +2,7 @@
 import React from "react";
 import {
   BetweenHorizontalEnd,
+  Home,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -31,6 +32,7 @@ function SideNavBar() {
       group: "Menu",
       items: [
         { id: "logout", text: "Logout", icon: <LogOut />, link: '/' },
+        { id: "go_home", text: "Return to Home Page", icon: <Home />, link: '/' },
       ],
     },
   ];
