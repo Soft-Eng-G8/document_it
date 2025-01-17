@@ -18,7 +18,7 @@ const ItemEntry = ({item, compact, type}: IItemEntry) => {
   const router = useRouter(); // Use the router instance
   const handleDocumentClick = () => {
     if (type === "document") {
-      router.push(`/doc_display`); // Navigate to a document-specific page
+      router.push(`/doc_display/${item.id}`); // Navigate to a document-specific page
     }
   };
   return (
