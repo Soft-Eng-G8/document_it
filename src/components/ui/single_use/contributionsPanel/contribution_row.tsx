@@ -1,7 +1,10 @@
+'use client'
 import React, { useMemo } from "react";
 
 interface ContributionsRowHeadProps {
-  documentName: string;
+  contribution_id: string;
+  contribution_type: string;
+  contribution_name: string;
   contributor: { name: string; imageUrl?: string };
   date: string;
   status: string;
@@ -26,7 +29,9 @@ const getColorForString = (str: string) => {
 };
 
 function ContributionRow({
-  documentName,
+  contribution_id,
+  contribution_type,
+  contribution_name,
   contributor,
   date,
   status,
@@ -47,8 +52,12 @@ function ContributionRow({
     <div className="flex flex-row p-2 justify-between items-center">
       {/* Document Name */}
       <div className="flex flex-row items-center flex-1">
-        <div className="size-7 border rounded-lg mr-3 hover:cursor-pointer"></div>
-        <div className="text-[16px] font-medium text-black">{documentName}</div>
+        <div className="text-[16px] font-medium text-black">{contribution_name}</div>
+      </div>
+
+      {/* Contribution Type */}
+      <div className="flex flex-row items-center flex-1">
+        <div className="text-[16px] font-medium text-black first-letter:uppercase">{contribution_type.toLowerCase()}</div>
       </div>
 
       {/* Contributor */}
@@ -76,13 +85,32 @@ function ContributionRow({
       {/* Status */}
       <div className=" flex-1 flex items-start justify-start">
         <div
-            className={`text-[16px] font-medium px-2 py-1 w-[100px] rounded-lg text-center  ${getStatusStyles(
+            className={`text-[16px] font-medium px-2 py-1 w-[100px] rounded-lg text-center first-letter:uppercase ${getStatusStyles(
             status
             )}`}
         >
-            {status}
+            {status.toLowerCase()}
         </div>
       </div>
+
+      {status === 'Pending' ? (
+         <div className="flex flex-row items-center flex-1">
+        <button className="text-[16px] font-medium text-black border-2 px-3 py-2 rounded-lg border-black" onClick={async(e) => {
+          await fetch(`http://localhost:3000/api/documents/verify/${contribution_id}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              status: 'APPROVED'
+            })
+          })
+          
+        }}>{'Submit'}</button>
+      </div>
+    
+      ) : (
+                 <div className="flex flex-row items-center flex-1">
+      </div>
+
+      )}
       
     </div>
   );
