@@ -18,7 +18,6 @@ export default async () => {
 
   return (
   <div className='bg-gray-300'>
-    <Header/>
     <header id="heading" className="py-28"> 
       <h1 className="
       text-center text-8xl 

@@ -62,10 +62,12 @@ export default async function Header() {
 
           {/* Conditional rendering based on auth state */}
           {session ? (
-            <Avatar>
+            <Link href={`/profile_page`}>
+              <Avatar>
               <AvatarImage src={session.user.image || ''} alt={session.user.name || ''} />
               <AvatarFallback>{session.user.name?.charAt(0) || 'U'}</AvatarFallback>
-            </Avatar>
+              </Avatar>
+            </Link>
           ) : (
             <Link 
               href="/login" 

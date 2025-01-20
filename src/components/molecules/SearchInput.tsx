@@ -13,6 +13,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/multiple_uses/button"
 import { Document , Category} from "@prisma/client"
 import { useDebouncedCallback } from 'use-debounce';
+import Link from "next/link"
 
 type ExtendedDocument = Document & {
   category: Category
@@ -80,13 +81,13 @@ const SearchInput = () => {
           <CommandGroup title={`Results for '${search}'`}>
             {items?.map((item) => (
               <CommandItem key={item.id}>
-                <div className="flex flex-col p-2 border-b border-gray-200">
+                <Link href={`/doc_display/${item.id}`}className="flex flex-col p-2 border-b border-gray-200">
                   <span className="font-bold text-lg">{item.title}</span>
-                  <span className="text-gray-600">{item.description}</span>
+                  <span className="text-gray-600 line-clamp-2">{item.description}</span>
                   <span className="text-sm text-gray-500">
                     {item.category.title}
                   </span>
-                </div>
+                </Link>
               </CommandItem>
             ))}
           </CommandGroup>

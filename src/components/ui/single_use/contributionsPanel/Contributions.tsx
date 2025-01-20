@@ -19,44 +19,7 @@ async function  ContributionsPanel() {
             user: true,
         },
     })
-    const contributions = [
-        {
-            documentName: "Visa Application",
-            contributor: { name: "Arabet Hakim" },
-            date: "2024-12-25",
-            status: "Pending" as "Pending",
-        },
-        {
-            documentName: "Visa Application",
-            contributor: { name: "John Doe" },
-            date: "2024-12-25",
-            status: "Reviewed" as "Reviewed",
-        },
-        {
-            documentName: "Visa Application",
-            contributor: { name: "Arabet Hakim" },
-            date: "2024-12-25",
-            status: "Pending" as "Pending",
-        },
-        {
-            documentName: "Visa Application",
-            contributor: { name: "John Doe" },
-            date: "2024-12-25",
-            status: "Reviewed" as "Reviewed",
-        },
-        {
-            documentName: "Visa Application",
-            contributor: { name: "Arabet Hakim" },
-            date: "2024-12-25",
-            status: "Pending" as "Pending",
-        },
-        {
-            documentName: "Visa Application",
-            contributor: { name: "John Doe" },
-            date: "2024-12-25",
-            status: "Reviewed" as "Reviewed",
-        },
-    ]
+
   return (
     <div className='w-full h-[550px] bg-mywhite rounded-lg shadow-lg flex flex-col justify-between'>
         <div className='flex-1 flex flex-row justify-between items-center p-4 ml-6'>
@@ -93,7 +56,9 @@ async function  ContributionsPanel() {
       {fetchedContributions.map((contribution, key) => (
         <ContributionRow
           key={key}
-          documentName={contribution.oldTitle ?? ""} 
+          contribution_id={contribution.id}
+          contribution_name={contribution.oldTitle ?? contribution.newTitle ?? ''} 
+          contribution_type={contribution.type ?? ''}
           contributor={contribution.user}
           date={contribution.createdAt.toLocaleDateString()}
           status={contribution.status}
